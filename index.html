@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переводчик изображения в цветной текст</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #b786e4;
+            text-align: center;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-section, .output-section, .settings-section, .preview-section {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #b786e4;
+        }
+        
+        input, select, textarea {
+            padding: 8px;
+            background-color: #333;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #b786e4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #a04af0;
+        }
+        
+        #outputText {
+            width: 100%;
+            height: 300px;
+            background-color: #222;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            overflow: auto;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 10px;
+        }
+        
+        .copy-btn {
+            background-color: #42ff9e;
+            color: #1a1a1a;
+        }
+        
+        .copy-btn:hover {
+            background-color: #28c777;
+        }
+        
+        .header-text {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        #textPreview {
+            background-color: #222;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 300px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .preview-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .preview-column {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Переводчик изображения в цветной текст</h1>
+    
+    <div class="container">
+        <div class="input-section">
+            <h2>Загрузите изображение</h2>
+            <input type="file" id="imageInput" accept="image/*">
+            <div id="imageContainer">
+                <img id="imagePreview" style="display: none;">
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h2>Настройки преобразования</h2>
+            
+            <div class="settings-row">
+                <div class="settings-group">
+                    <label for="textBefore">Текст перед изображением:</label>
+                    <textarea id="textBefore" class="header-text" rows="3"><b><size=24>Вы выбрали предмет: <color=yellow><u>Потёртая фотография</u></color></b></textarea>
+                </div>
+            </div>
+            
+            <div class="settings-row">
+                <div class="settings-group">
+                    <label for="charType">Символ для отрисовки:</label>
+                    <select id="charType">
+                        <option value="█" selected>█ (Блок)</option>
+                        <option value="■">■ (Квадрат)</option>
+                        <option value="▄">▄ (Полублок)</option>
+                        <option value="@">@</option>
+                        <option value="#">#</option>
+                        <option value="*">*</option>
+                    </select>
+                </div>
+                
+                <div class="settings-group">
+                    <label for="lineHeight">Высота строки (line-height):</label>
+                    <input type="text" id="lineHeight" value="70%">
+                </div>
+                
+                <div class="settings-group">
+                    <label for="mspace">Межсимвольный интервал (mspace):</label>
+                    <input type="text" id="mspace" value="0.21em">
+                </div>
+            </div>
+            
+            <div class="settings-row">
+                <div class="settings-group">
+                    <label for="fontSize">Размер шрифта (size):</label>
+                    <input type="text" id="fontSize" value="14">
+                </div>
+                
+                <div class="settings-group">
+                    <label for="widthLimit">Ширина (в символах):</label>
+                    <input type="number" id="widthLimit" value="50" min="10" max="200">
+                </div>
+                
+                <div class="settings-group">
+                    <label for="colorPrecision">Точность цветов (1-10):</label>
+                    <input type="number" id="colorPrecision" value="5" min="1" max="10">
+                </div>
+            </div>
+            
+            <button id="convertBtn">Преобразовать в текст</button>
+        </div>
+        
+        <div class="preview-section">
+            <h2>Предпросмотр</h2>
+            <div class="preview-container">
+                <div class="preview-column">
+                    <h3>Исходное изображение</h3>
+                    <img id="previewImage" style="max-width: 100%; max-height: 300px; display: none;">
+                </div>
+                <div class="preview-column">
+                    <h3>Текстовый результат</h3>
+                    <div id="textPreview"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <h2>Результат для копирования</h2>
+            <button id="copyBtn" class="copy-btn">Копировать код</button>
+            <textarea id="outputText" readonly></textarea>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', convertImageToText);
+        document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+        document.getElementById('imageInput').addEventListener('change', handleImageUpload);
+        
+        let uploadedImage = null;
+        
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = document.getElementById('imagePreview');
+                const previewImg = document.getElementById('previewImage');
+                img.src = event.target.result;
+                previewImg.src = event.target.result;
+                img.style.display = 'block';
+                previewImg.style.display = 'block';
+                uploadedImage = img;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function convertImageToText() {
+            if (!uploadedImage) {
+                alert('Пожалуйста, загрузите изображение сначала');
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = uploadedImage;
+            
+            // Устанавливаем размеры canvas в соответствии с настройками ширины
+            const widthLimit = parseInt(document.getElementById('widthLimit').value);
+            const aspectRatio = img.naturalHeight / img.naturalWidth;
+            canvas.width = widthLimit;
+            canvas.height = Math.floor(widthLimit * aspectRatio);
+            
+            // Рисуем изображение на canvas
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Получаем данные пикселей
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // Настройки
+            const charType = document.getElementById('charType').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const mspace = document.getElementById('mspace').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const colorPrecision = parseInt(document.getElementById('colorPrecision').value);
+            const textBefore = document.getElementById('textBefore').value;
+            
+            // Генерируем текст
+            let result = textBefore + '\n\n';
+            let previewHtml = '';
+            
+            // Добавляем настройки стиля
+            result += `<line-height=${lineHeight}><mspace=${mspace}><b><size=${fontSize}>`;
+            previewHtml += `<div style="line-height:${lineHeight}; letter-spacing:${mspace}; font-size:${fontSize}px; font-family: 'Courier New', monospace; font-weight: bold;">`;
+            
+            // Обрабатываем каждый пиксель
+            for (let y = 0; y < canvas.height; y++) {
+                let line = '';
+                let previewLine = '<div>';
+                
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const r = data[index];
+                    const g = data[index + 1];
+                    const b = data[index + 2];
+                    
+                    // Преобразуем RGB в HEX с учетом точности
+                    const hexColor = rgbToHex(r, g, b, colorPrecision);
+                    
+                    // Добавляем символ с цветом
+                    line += `<color=#${hexColor}>${charType}</color>`;
+                    previewLine += `<span style="color: #${hexColor};">${charType}</span>`;
+                }
+                
+                result += line + '\n';
+                previewLine += '</div>';
+                previewHtml += previewLine;
+            }
+            
+            // Закрываем теги
+            result += `</b></color></size>`;
+            previewHtml += '</div>';
+            
+            document.getElementById('outputText').value = result;
+            document.getElementById('textPreview').innerHTML = previewHtml;
+        }
+        
+        function rgbToHex(r, g, b, precision) {
+            // Уменьшаем точность цвета в соответствии с настройкой
+            const factor = Math.pow(2, 8 - precision);
+            r = Math.floor(r / factor) * factor;
+            g = Math.floor(g / factor) * factor;
+            b = Math.floor(b / factor) * factor;
+            
+            // Преобразуем в HEX и добавляем ведущие нули при необходимости
+            const toHex = (c) => {
+                const hex = c.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            
+            return toHex(r) + toHex(g) + toHex(b);
+        }
+        
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputText');
+            outputText.select();
+            document.execCommand('copy');
+            
+            // Временная смена текста кнопки
+            const btn = document.getElementById('copyBtn');
+            btn.textContent = 'Скопировано!';
+            setTimeout(() => {
+                btn.textContent = 'Копировать код';
+            }, 2000);
+        }
+    </script>
+</body>
+  </html>

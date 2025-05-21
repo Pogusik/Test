@@ -859,11 +859,11 @@
         
         switch (type) {
           case 'KeycardCustomSite02':
-            command = `7ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor} ${hldName} ${circleCount.value}`;
+            command = `ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor} ${hldName} ${circleCount.value}`;
             break;
             
           case 'keycardcustommanagement':
-            command = `7ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor}`;
+            command = `ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor}`;
             break;
             
           case 'keycardcustomtaskforce':
@@ -872,7 +872,7 @@
               serialNumber.focus();
               return;
             }
-            command = `7ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${hldName} ${serial} ${circleCount.value}`;
+            command = `ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${hldName} ${serial} ${circleCount.value}`;
             break;
             
           case 'KeycardCustomMetalCase':
@@ -881,7 +881,7 @@
               serialNumber.focus();
               return;
             }
-            command = `7ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor} ${hldName} ${serial} ${circleCount.value}`;
+            command = `ckeycard ${playerId.value} ${type} ${invName} ${scpAccess.value} ${weaponAccess.value} ${adminAccess.value} ${permColor} ${tintColor} ${lblName} ${labelColor} ${hldName} ${serial} ${circleCount.value}`;
             break;
             
           default:

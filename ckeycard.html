@@ -458,6 +458,76 @@
     .euclid { background-color: #f39c12; color: white; }
     .keter { background-color: #e74c3c; color: white; }
     .neutralized { background-color: #95a5a6; color: white; }
+.keycard-preview {
+  width: 200px;
+  height: 120px;
+  background-color: var(--bg-input);
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: var(--transition);
+}
+/* Административная карта - скругленные углы и плавный срез */
+.keycard-preview[data-type="keycardcustommanagement"] {
+  width: 220px;
+  border-radius: 20px 20px 190px 20px;
+  border: 1px solid var(--border-light);
+}
+
+/* Металлический кейс - серая обводка с небольшим скруглением */
+.keycard-preview[data-type="KeycardCustomMetalCase"] {
+  border-radius: 6px;
+  border: 3px solid #808080;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Стандартная карта - небольшие скругления */
+.keycard-preview[data-type="KeycardCustomSite02"] {
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+}
+/* Остальные стили остаются без изменений */
+.keycard-preview::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Карта оперативника - более выраженные скругления */
+.keycard-preview[data-type="keycardcustomtaskforce"] {
+  border-radius: 20px 20px 60px 20px;
+  border: 1px solid var(--border-light);
+}
+
+/* Дырка для карты оперативника - теперь в правом нижнем углу */
+.keycard-preview[data-type="keycardcustomtaskforce"]::after {
+  content: "";
+    position: absolute;
+    inset-inline-start: 150px;
+    inset-block-start: 75px;
+  bottom: 15px;
+  right: 15px; /* Правый нижний угол */
+    width: 26px;
+    height: 26px;
+  background-color: var(--bg-card);
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+}
+/* Обновляем позицию кружков доступа, чтобы не пересекались с дыркой */
+.preview-dots {
+  position: absolute;
+  bottom: 15px;
+  right: 45px; /* Смещаем левее, чтобы не мешало дырке */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
   </style>
 </head>
 <body>
@@ -761,6 +831,7 @@
       // Обновление видимости полей
       function updateFieldVisibility() {
         const type = keycardType.value;
+		keycardPreview.setAttribute('data-type', type);
         
         if (type === 'keycardcustomtaskforce' || type === 'KeycardCustomMetalCase') {
           serialSection.style.display = 'block';
@@ -941,6 +1012,8 @@
 
       // Загрузка из LocalStorage
       function loadFromLocalStorage() {
+	  const currentType = keycardType.value;
+keycardPreview.setAttribute('data-type', currentType);
         const inputs = [
           'keycard-type', 'player-id', 'inventory-name', 'label-name', 
           'holder-name', 'serial-number', 'circle-count', 'scp-access', 
@@ -965,6 +1038,7 @@
             }
           }
         });
+		
       }
 
       // Инициализация при загрузке

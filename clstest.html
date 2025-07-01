@@ -313,6 +313,10 @@
             border-radius: 4px;
             background-color: #f9f9f9;
             min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .inventory {
@@ -683,6 +687,49 @@
             flex: 1;
         }
 
+        /* Стиль для панели патронов */
+
+
+        /* Разделительная линия в инвентаре */
+        .custom-items-divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--gray);
+            font-weight: 500;
+            grid-column: 1 / -1;
+        }
+
+        .custom-items-divider::before,
+        .custom-items-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 10px;
+        }
+
+        /* Импорт скрипта */
+        .import-container {
+            margin-top: 15px;
+        }
+
+        .import-btn {
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .inventory {
@@ -740,63 +787,13 @@
                 width: 100%;
             }
         }
-                .role-preview-card {
-            width: 100%;
-            height: 600px; /* Фиксированная высота */
-            background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .role-preview-image {
-            width: 414px; /* Фиксированная ширина */
-            height: 600px; /* Фиксированная высота */
-            object-fit: cover;
-            position: absolute;
-            opacity: 0.8;
-        }
-            .role-preview-card {
-        width: 100%;
-        height: 600px;
-        background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        transition: all 0.3s;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .role-preview-image {
-        width: 414px;
-        height: 600px;
-        object-fit: cover;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0.8;
-    }
-    .role-preview-card {
+        .role-preview-card {
     width: 100%;
-    height: auto;
+    height: 540px;
     background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
     border-radius: 8px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -805,116 +802,56 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: all 0.3s;
     border: 1px solid rgba(255,255,255,0.1);
-    min-height: 140px; /* Минимальная высота для компактности */
 }
 
-.role-preview-image {
-    width: auto;
-    height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    position: relative;
-    opacity: 0.9;
+.role-preview-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    border-color: var(--primary);
 }
 
 .role-preview-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 15px;
     width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-    .role-preview-card {
-        width: 100%;
-        height: 600px;
-        background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        transition: all 0.3s;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
+.role-preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
-    .role-preview-content {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
+.role-preview-name {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    margin-bottom: 5px;
+}
 
-    .role-preview-image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+.role-preview-icon {
+    font-size: 2rem;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 10px;
+}
 
-    .role-preview-name {
-        position: relative;
-        z-index: 2;
-        color: white;
-        font-weight: 500;
-        font-size: 1.1rem;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        margin-bottom: 5px;
-    }
-            .char-counter {
-            text-align: right;
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 5px;
-        }
-
-        /* Обновленный стиль для группы роли и инфо полей */
-        .role-info-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .role-info-group > .panel {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        /* Стиль для панели патронов */
-        .ammo-panel {
-            flex: 1;
-            min-width: 100%;
-            margin-top: 0px;
-        }
-
-        /* Разделительная линия в инвентаре */
-        .custom-items-divider {
-            display: flex;
-            align-items: center;
-            margin: 15px 0;
-            color: var(--gray);
-            font-weight: 500;
-            grid-column: 1 / -1;
-        }
-
-        .custom-items-divider::before,
-        .custom-items-divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #eee;
-            margin: 0 10px;
-        }
+.role-preview-placeholder {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -932,12 +869,17 @@
             <div class="panel-body">
                 <textarea id="exportOutput" class="form-control" readonly></textarea>
                 <div class="btn-group">
-                    <button class="btn btn-primary" onclick="generateCLscript()">
-                        <i class="fas fa-cogs"></i> Сгенерировать CLscript
-                    </button>
-                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
                         <i class="fas fa-copy"></i> Копировать
                     </button>
+                </div>
+                <div class="import-container">
+                    <label for="importInput">Импорт CLscript:</label>
+                    <textarea id="importInput" class="form-control" placeholder="Вставьте CLscript для импорта"></textarea>
+                    <button class="btn btn-secondary import-btn" onclick="importCLscript()">
+                        <i class="fas fa-file-import"></i> Импортировать
+                    </button>
+                    <div id="importError" class="error-message"></div>
                 </div>
             </div>
         </div>
@@ -1017,50 +959,51 @@
                     </div>
                 </div>
             </div>
-            <div class="panel ammo-panel">
-                <div class="panel-header">
-                    <i class="fas fa-bullseye"></i> Патроны
+            <div class="panel"> <!-- Убрал класс ammo-panel -->
+    <div class="panel-header">
+        <i class="fas fa-bullseye"></i> Патроны
+    </div>
+    <div class="panel-body">
+        <div class="slider-container-wrapper">
+            <div>
+                <div class="slider-container">
+                    <label for="ammo556Slider">5.56x45:</label>
+                    <input type="range" id="ammo556Slider" min="0" max="500" value="0">
+                    <span id="ammo556Value" class="slider-value">0</span>
+                    <input type="number" id="ammo556Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
                 </div>
-                <div class="panel-body">
-                <div class="slider-container-wrapper">
-                    <div>
-                        <div class="slider-container">
-                            <label for="ammo556Slider">5.56x45:</label>
-                            <input type="range" id="ammo556Slider" min="0" max="500" value="0">
-                            <span id="ammo556Value" class="slider-value">0</span>
-                            <input type="number" id="ammo556Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
-                        </div>
-                        <div class="slider-container">
-                            <label for="ammo762Slider">7.62x39:</label>
-                            <input type="range" id="ammo762Slider" min="0" max="500" value="0">
-                            <span id="ammo762Value" class="slider-value">0</span>
-                            <input type="number" id="ammo762Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="slider-container">
-                            <label for="ammo9Slider">9x19:</label>
-                            <input type="range" id="ammo9Slider" min="0" max="500" value="0">
-                            <span id="ammo9Value" class="slider-value">0</span>
-                            <input type="number" id="ammo9Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
-                        </div>
-                        <div class="slider-container">
-                            <label for="ammo12Slider">12 калибр:</label>
-                            <input type="range" id="ammo12Slider" min="0" max="500" value="0">
-                            <span id="ammo12Value" class="slider-value">0</span>
-                            <input type="number" id="ammo12Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="slider-container">
-                            <label for="ammo44Slider">44 калибр:</label>
-                            <input type="range" id="ammo44Slider" min="0" max="500" value="0">
-                            <span id="ammo44Value" class="slider-value">0</span>
-                            <input type="number" id="ammo44Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
-                        </div>
-                    </div>
+                <div class="slider-container">
+                    <label for="ammo762Slider">7.62x39:</label>
+                    <input type="range" id="ammo762Slider" min="0" max="500" value="0">
+                    <span id="ammo762Value" class="slider-value">0</span>
+                    <input type="number" id="ammo762Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
                 </div>
             </div>
+            <div>
+                <div class="slider-container">
+                    <label for="ammo9Slider">9x19:</label>
+                    <input type="range" id="ammo9Slider" min="0" max="500" value="0">
+                    <span id="ammo9Value" class="slider-value">0</span>
+                    <input type="number" id="ammo9Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                </div>
+                <div class="slider-container">
+                    <label for="ammo12Slider">12 калибр:</label>
+                    <input type="range" id="ammo12Slider" min="0" max="500" value="0">
+                    <span id="ammo12Value" class="slider-value">0</span>
+                    <input type="number" id="ammo12Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                </div>
+            </div>
+            <div>
+                <div class="slider-container">
+                    <label for="ammo44Slider">44 калибр:</label>
+                    <input type="range" id="ammo44Slider" min="0" max="500" value="0">
+                    <span id="ammo44Value" class="slider-value">0</span>
+                    <input type="number" id="ammo44Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         </div>
         
         <div class="panel">
@@ -1071,10 +1014,8 @@
                 <div class="format-buttons">
                     <button class="format-btn" onclick="insertTag('b')"><i class="fas fa-bold"></i> Жирный</button>
                     <button class="format-btn" onclick="insertTag('i')"><i class="fas fa-italic"></i> Курсив</button>
-                    <button class="format-btn" onclick="insertTag('size')">
-                        <i class="fas fa-text-height"></i> Размер
-                        <input type="number" id="sizeInput" class="size-input" min="10" max="50" value="20">
-                    </button>
+                    <button class="format-btn" onclick="insertTag('size')"><i class="fas fa-text-height"></i> Размер</button>
+                    <input type="number" id="sizeInput" class="size-input" min="10" max="50" value="20" placeholder="Размер">
                     <button class="format-btn" onclick="insertTag('\\n')"><i class="fas fa-arrow-down"></i> Новая строка</button>
                 </div>
                 
@@ -1113,7 +1054,7 @@
         
         <div class="panel">
             <div class="panel-header">
-                <i class="fas fa-backpack"></i> Инвентарь
+                <i class="fas fa-backpack"></i> <i class="fas fa-boxes"></i> Инвентарь
             </div>
             <div class="panel-body">
                 <div class="inventory">
@@ -1129,7 +1070,7 @@
                 
                 <div class="server-selector">
                     <label for="serverSelect">Выберите сервер:</label>
-                    <select id="serverSelect" class="form-control" onchange="filterItemsByServer()">
+                    <select id="serverSelect" class="form-control">
                         <option value="all">Все серверы</option>
                         <option value="FullRP">FullRP</option>
                         <option value="EventRP">EventRP</option>
@@ -1143,7 +1084,7 @@
                 </div>
                 
                 <div class="item-search-container">
-                    <input type="text" id="itemSearch" class="form-control" placeholder="Поиск предметов..." oninput="filterItems()">
+                    <input type="text" id="itemSearch" class="form-control" placeholder="Поиск предметов...">
                     <button class="btn btn-outline" onclick="clearItemSearch()">
                         <i class="fas fa-times"></i> Очистить
                     </button>
@@ -1554,7 +1495,51 @@
                 }
             `;
             document.head.appendChild(style);
+            
+            // Автоматическая генерация скрипта при изменениях
+            setupAutoGeneration();
+            
+            // Автоматическая фильтрация предметов при изменении сервера
+            document.getElementById('serverSelect').addEventListener('change', filterItems);
+            
+            // Автоматическая фильтрация предметов при поиске
+            document.getElementById('itemSearch').addEventListener('input', filterItems);
         });
+        
+        // Настройка автоматической генерации скрипта
+        function setupAutoGeneration() {
+            // Основные параметры
+            document.getElementById('playerID').addEventListener('input', generateCLscript);
+            document.getElementById('nickname').addEventListener('input', generateCLscript);
+            document.getElementById('hpSlider').addEventListener('input', generateCLscript);
+            document.getElementById('hpInput').addEventListener('input', generateCLscript);
+            
+            // Инфополя
+            const infoCheckboxes = document.querySelectorAll('.checkbox-item input');
+            infoCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', generateCLscript);
+            });
+            
+            // Роль
+            document.getElementById('roleSelect').addEventListener('change', generateCLscript);
+            
+            // Патроны
+            document.getElementById('ammo556Slider').addEventListener('input', generateCLscript);
+            document.getElementById('ammo556Input').addEventListener('input', generateCLscript);
+            document.getElementById('ammo762Slider').addEventListener('input', generateCLscript);
+            document.getElementById('ammo762Input').addEventListener('input', generateCLscript);
+            document.getElementById('ammo9Slider').addEventListener('input', generateCLscript);
+            document.getElementById('ammo9Input').addEventListener('input', generateCLscript);
+            document.getElementById('ammo12Slider').addEventListener('input', generateCLscript);
+            document.getElementById('ammo12Input').addEventListener('input', generateCLscript);
+            document.getElementById('ammo44Slider').addEventListener('input', generateCLscript);
+            document.getElementById('ammo44Input').addEventListener('input', generateCLscript);
+            
+            // Описание
+            document.getElementById('descriptionInput').addEventListener('input', generateCLscript);
+            
+            // Инвентарь (обрабатывается в selectItem)
+        }
         
         // Инициализация слайдера с привязкой к числовому полю
         function initSlider(sliderId, valueId, inputId) {
@@ -1565,6 +1550,7 @@
             slider.addEventListener('input', function() {
                 value.textContent = this.value;
                 input.value = this.value;
+                generateCLscript();
             });
             
             input.addEventListener('input', function() {
@@ -1572,6 +1558,7 @@
                 slider.value = val;
                 value.textContent = val;
                 this.value = val;
+                generateCLscript();
             });
         }
         
@@ -1590,16 +1577,18 @@
         function selectItem(name, id) {
             inventory[currentSlot] = { name: name, id: id };
             document.getElementById('slot' + currentSlot).textContent = name;
+            generateCLscript();
         }
         
         // Функция для очистки слота
         function clearSlot(slot) {
             inventory[slot] = { name: 'Пусто', id: '' };
             document.getElementById('slot' + slot).textContent = 'Пусто';
+            generateCLscript();
         }
         
         // Функция для вставки тегов форматирования
-         function insertTag(tag) {
+        function insertTag(tag) {
             const textarea = document.getElementById('descriptionInput');
             const startPos = textarea.selectionStart;
             const endPos = textarea.selectionEnd;
@@ -1644,10 +1633,11 @@
             
             updatePreview();
             updateCharCounter();
+            generateCLscript();
         }
         
         // Функция для вставки цвета
-function insertColor(color) {
+        function insertColor(color) {
             const textarea = document.getElementById('descriptionInput');
             const startPos = textarea.selectionStart;
             const endPos = textarea.selectionEnd;
@@ -1678,14 +1668,14 @@ function insertColor(color) {
             
             updatePreview();
             updateCharCounter();
+            generateCLscript();
         }
+        
         function updateCharCounter() {
             const text = document.getElementById('descriptionInput').value;
             document.getElementById('charCounter').textContent = `${text.length} символов`;
         }
 
-        // Инициализация счетчика символов
-        document.getElementById('descriptionInput').addEventListener('input', updateCharCounter);
         // Обновление предпросмотра описания
         function updatePreview() {
             let text = document.getElementById('descriptionInput').value;
@@ -1713,16 +1703,16 @@ function insertColor(color) {
         }
         
         // Функция для генерации CLscript
-function generateCLscript() {
+        function generateCLscript() {
     const playerID = document.getElementById('playerID').value;
     const description = document.getElementById('descriptionInput').value;
     const nickname = document.getElementById('nickname').value;
     const hp = document.getElementById('hpSlider').value;
     
     // Получаем выбранную роль
-    const role = document.getElementById('roleSelect').value || ''; // Добавляем пустую строку, если роль не выбрана
+    const role = document.getElementById('roleSelect').value || 'None';
     
-    // Получаем предметы инвентаря
+    // Формируем инвентарь
     let items = [];
     for (let i = 1; i <= 8; i++) {
         if (inventory[i].id) {
@@ -1731,6 +1721,11 @@ function generateCLscript() {
             items.push('');
         }
     }
+    // Удаляем пустые слоты в конце
+    while (items.length > 0 && items[items.length-1] === '') {
+        items.pop();
+    }
+    const inventoryString = items.join(',');
     
     // Формируем строку патронов
     const ammo556 = document.getElementById('ammo556Slider').value;
@@ -1739,13 +1734,13 @@ function generateCLscript() {
     const ammo12 = document.getElementById('ammo12Slider').value;
     const ammo44 = document.getElementById('ammo44Slider').value;
     
-    const ammoString = `Nato556:${ammo556},Nato762:${ammo762},Nato9:${ammo9},Ammo12Gauge:${ammo12},Ammo44Cal:${ammo44}`;
+    const ammoString = `Nato9:${ammo9},Nato556:${ammo556},Nato762:${ammo762},Ammo12Gauge:${ammo12},Ammo44Cal:${ammo44}`;
     
     // Рассчитываем сумму инфополей
     const infoSum = calculateInfoSum();
     
-    // Формируем итоговую строку с учетом роли
-    const clscript = `clscript ${playerID};${description};${nickname};${hp};${role},${items.join(',')};${ammoString};${infoSum}`;
+    // Формируем итоговую строку с правильным порядком параметров
+    const clscript = `clscript ${playerID} ${role};${description};${nickname};${hp};${inventoryString};${ammoString};${infoSum}`;
     
     document.getElementById('exportOutput').value = clscript;
 }
@@ -1776,7 +1771,7 @@ function generateCLscript() {
             }, 2500);
         }
         
-        // Функция для фильтрации предметов по серверу
+        // Функция для фильтрации предметов
         function filterItems() {
             const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
             const serverSelect = document.getElementById('serverSelect').value;
@@ -1841,6 +1836,223 @@ function generateCLscript() {
             filterItems();
         }
         
+        // Функция для импорта CLscript
+        function importCLscript() {
+    const importInput = document.getElementById('importInput').value.trim();
+    const errorElement = document.getElementById('importError');
+    errorElement.textContent = '';
+    
+    // Проверяем, начинается ли строка с clscript
+    if (!importInput.startsWith('clscript ')) {
+        errorElement.textContent = 'Ошибка: скрипт должен начинаться с "clscript "';
+        return;
+    }
+    
+    // Удаляем "clscript " из начала строки
+    const scriptBody = importInput.substring(9);
+    
+    // Разбиваем строку на части по точкам с запятой
+    const parts = scriptBody.split(';');
+    
+    if (parts.length < 7) {
+        errorElement.textContent = 'Ошибка: неверный формат скрипта (недостаточно частей)';
+        return;
+    }
+    
+    try {
+        // Первая часть содержит ID и роль
+        const firstPart = parts[0].split(' ');
+        if (firstPart.length < 2) {
+            errorElement.textContent = 'Ошибка: первая часть должна содержать ID и роль';
+            return;
+        }
+        
+        // Заполняем основные поля
+        document.getElementById('playerID').value = firstPart[0] || '';
+        
+        // Устанавливаем роль
+        const roleId = firstPart[1];
+        document.getElementById('roleSelect').value = roleId;
+        updateRolePreview(roleId); // Обновляем превью роли
+        
+        // Описание
+        document.getElementById('descriptionInput').value = parts[1] || '';
+        
+        // Никнейм
+        document.getElementById('nickname').value = parts[2] || '';
+        
+        // HP
+        const hp = parseInt(parts[3]) || 100;
+        document.getElementById('hpSlider').value = hp;
+        document.getElementById('hpValue').textContent = hp;
+        document.getElementById('hpInput').value = hp;
+        
+        // Инвентарь
+        const inventoryItems = parts[4].split(',');
+        
+        // Сначала очищаем все слоты
+        for (let i = 1; i <= 8; i++) {
+            inventory[i] = { name: 'Пусто', id: '' };
+            document.getElementById('slot' + i).textContent = 'Пусто';
+        }
+        
+        // Заполняем слоты предметами из скрипта
+        for (let i = 0; i < Math.min(inventoryItems.length, 8); i++) {
+            const itemId = inventoryItems[i] || '';
+            let itemName = 'Пусто';
+            
+            if (itemId) {
+                // Ищем предмет в базе
+                const foundItem = allItems.find(item => item.id === itemId);
+                
+                if (foundItem) {
+                    itemName = foundItem.name;
+                } else {
+                    // Если предмет не найден, проверяем, является ли он кастомным
+                    const serverSelect = document.getElementById('serverSelect').value;
+                    const isCustomItem = allItems.some(item => 
+                        item.id === itemId && item.server !== 'all' && item.server !== serverSelect
+                    );
+                    
+                    if (isCustomItem) {
+                        itemName = `Неизвестный кастомный предмет (ID: ${itemId})`;
+                    } else {
+                        itemName = `Неизвестный предмет (ID: ${itemId})`;
+                    }
+                }
+            }
+            
+            inventory[i+1] = { name: itemName, id: itemId };
+            document.getElementById('slot' + (i+1)).textContent = itemName;
+        }
+        
+        // Патроны
+        const ammoParts = parts[5].split(',');
+        
+        // Сбрасываем все патроны к 0
+        document.getElementById('ammo556Slider').value = 0;
+        document.getElementById('ammo556Value').textContent = 0;
+        document.getElementById('ammo556Input').value = 0;
+        
+        document.getElementById('ammo762Slider').value = 0;
+        document.getElementById('ammo762Value').textContent = 0;
+        document.getElementById('ammo762Input').value = 0;
+        
+        document.getElementById('ammo9Slider').value = 0;
+        document.getElementById('ammo9Value').textContent = 0;
+        document.getElementById('ammo9Input').value = 0;
+        
+        document.getElementById('ammo12Slider').value = 0;
+        document.getElementById('ammo12Value').textContent = 0;
+        document.getElementById('ammo12Input').value = 0;
+        
+        document.getElementById('ammo44Slider').value = 0;
+        document.getElementById('ammo44Value').textContent = 0;
+        document.getElementById('ammo44Input').value = 0;
+        
+        // Устанавливаем значения патронов из скрипта
+        ammoParts.forEach(part => {
+            const [type, value] = part.split(':');
+            const amount = parseInt(value) || 0;
+            
+            switch(type) {
+                case 'Nato556':
+                    document.getElementById('ammo556Slider').value = amount;
+                    document.getElementById('ammo556Value').textContent = amount;
+                    document.getElementById('ammo556Input').value = amount;
+                    break;
+                case 'Nato762':
+                    document.getElementById('ammo762Slider').value = amount;
+                    document.getElementById('ammo762Value').textContent = amount;
+                    document.getElementById('ammo762Input').value = amount;
+                    break;
+                case 'Nato9':
+                    document.getElementById('ammo9Slider').value = amount;
+                    document.getElementById('ammo9Value').textContent = amount;
+                    document.getElementById('ammo9Input').value = amount;
+                    break;
+                case 'Ammo12Gauge':
+                    document.getElementById('ammo12Slider').value = amount;
+                    document.getElementById('ammo12Value').textContent = amount;
+                    document.getElementById('ammo12Input').value = amount;
+                    break;
+                case 'Ammo44Cal':
+                    document.getElementById('ammo44Slider').value = amount;
+                    document.getElementById('ammo44Value').textContent = amount;
+                    document.getElementById('ammo44Input').value = amount;
+                    break;
+            }
+        });
+        
+        // Инфополя
+        const infoSum = parseInt(parts[6]) || 0;
+        document.getElementById('nicknameCheckbox').checked = !!(infoSum & Math.pow(2, 0));
+        document.getElementById('badgeCheckbox').checked = !!(infoSum & Math.pow(2, 1));
+        document.getElementById('customInfoCheckbox').checked = !!(infoSum & Math.pow(2, 2));
+        document.getElementById('roleCheckbox').checked = !!(infoSum & Math.pow(2, 3));
+        document.getElementById('unitNameCheckbox').checked = !!(infoSum & Math.pow(2, 4));
+        document.getElementById('powerStatusCheckbox').checked = !!(infoSum & Math.pow(2, 5));
+        
+        // Обновляем предпросмотр
+        updatePreview();
+        updateCharCounter();
+        generateCLscript();
+        
+        // Показываем уведомление об успешном импорте
+        showNotification('CLscript успешно импортирован!', 'success');
+        
+    } catch (e) {
+        errorElement.textContent = 'Ошибка при разборе скрипта: ' + e.message;
+    }
+}
+
+// Функция для обновления превью роли
+function updateRolePreview(roleId) {
+    const role = rolesData.find(r => r.id === roleId);
+    const rolePreviewCard = document.getElementById('rolePreviewCard');
+    const rolePreviewContent = document.getElementById('rolePreviewContent');
+    
+    if (role) {
+        rolePreviewCard.style.background = `linear-gradient(135deg, ${role.color}30, ${role.color}10)`;
+        rolePreviewCard.style.borderColor = role.color;
+        rolePreviewContent.innerHTML = `
+            <img src="${role.image}" class="role-preview-image">
+            <div class="role-preview-name">${role.name}</div>
+        `;
+    } else {
+        // Сброс превью, если роль не найдена
+        rolePreviewCard.style.background = 'linear-gradient(135deg, #2a2a3c, #1e1e2d)';
+        rolePreviewCard.style.borderColor = 'rgba(255,255,255,0.1)';
+        rolePreviewContent.innerHTML = `
+            <div class="role-preview-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="role-preview-placeholder">Выберите роль</div>
+        `;
+    }
+}
+
+// Функция для показа уведомлений
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.right = '20px';
+    notification.style.backgroundColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+    notification.style.color = 'white';
+    notification.style.padding = '10px 20px';
+    notification.style.borderRadius = '4px';
+    notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    notification.style.zIndex = '1000';
+    notification.style.animation = 'fadeIn 0.3s, fadeOut 0.3s 2s forwards';
+    notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 2500);
+}
+        
         // Инициализация модального окна ролей
         function initRoleModal() {
             const modal = document.getElementById('roleModal');
@@ -1856,7 +2068,6 @@ function generateCLscript() {
             
             // Открытие модального окна
             rolePreviewCard.addEventListener('click', function() {
-                
                 modal.style.display = 'flex';
                 renderRoles();
             });
@@ -1936,6 +2147,9 @@ function generateCLscript() {
                         
                         // Закрываем модальное окно
                         modal.style.display = 'none';
+                        
+                        // Генерируем скрипт
+                        generateCLscript();
                     });
                     
                     rolesGrid.appendChild(roleElement);

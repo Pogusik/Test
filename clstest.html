@@ -1634,7 +1634,10 @@
             updateCharCounter();
             generateCLscript();
         }
-        
+        function getRoleColor(roleId) {
+    const role = rolesData.find(r => r.id === roleId);
+    return role ? role.color : '#FFFFFF'; // Белый цвет по умолчанию, если роль не найдена
+}
         // Функция для вставки цвета
         function insertColor(color) {
             const textarea = document.getElementById('descriptionInput');
@@ -1677,17 +1680,23 @@
 
         // Обновление предпросмотра описания
         function updatePreview() {
-            let text = document.getElementById('descriptionInput').value;
-            // Заменяем \n на <br>
-            text = text.replace(/\\n/g, '<br>');
-            // Заменяем теги форматирования
-            text = text.replace(/<b>(.*?)<\/b>/g, '<b>$1</b>');
-            text = text.replace(/<i>(.*?)<\/i>/g, '<i>$1</i>');
-            text = text.replace(/<size=(.*?)>(.*?)<\/size>/g, '<span style="font-size:$1px">$2</span>');
-            text = text.replace(/<color=(.*?)>(.*?)<\/color>/g, '<span style="color:$1">$2</span>');
-            
-            document.getElementById('descriptionPreview').innerHTML = text;
-        }
+    let text = document.getElementById('descriptionInput').value;
+    const roleId = document.getElementById('roleSelect').value;
+    const roleColor = getRoleColor(roleId);
+    
+    // Заменяем \n на <br>
+    text = text.replace(/\\n/g, '<br>');
+    // Заменяем теги форматирования
+    text = text.replace(/<b>(.*?)<\/b>/g, '<b>$1</b>');
+    text = text.replace(/<i>(.*?)<\/i>/g, '<i>$1</i>');
+    text = text.replace(/<size=(.*?)>(.*?)<\/size>/g, '<span style="font-size:$1px">$2</span>');
+    text = text.replace(/<color=(.*?)>(.*?)<\/color>/g, '<span style="color:$1">$2</span>');
+    
+    // Устанавливаем базовый цвет из роли
+    const previewContainer = document.getElementById('descriptionPreview');
+    previewContainer.innerHTML = text;
+    previewContainer.style.color = roleColor;
+}
         
         // Функция для расчета суммы инфополей
         function calculateInfoSum() {
@@ -1740,6 +1749,9 @@
     
     // Формируем итоговую строку с правильным порядком параметров
     const clscript = `clscript ${playerID} ${role};${description};${nickname};${hp};${inventoryString};${ammoString};${infoSum}`;
+    
+    document.getElementById('exportOutput').value = clscript;
+        updatePreview();
     
     document.getElementById('exportOutput').value = clscript;
 }
@@ -1870,9 +1882,11 @@
         document.getElementById('playerID').value = firstPart[0] || '';
         
         // Устанавливаем роль
-        const roleId = firstPart[1];
-        document.getElementById('roleSelect').value = roleId;
-        updateRolePreview(roleId); // Обновляем превью роли
+// Устанавливаем роль
+const roleId = firstPart[1];
+document.getElementById('roleSelect').value = roleId;
+updateRolePreview(roleId);
+updatePreview(); // Обновляем цвет текста в предпросмотре
         
         // Описание
         document.getElementById('descriptionInput').value = parts[1] || '';

@@ -330,7 +330,7 @@
             padding: 15px;
             border-radius: 6px;
             min-height: 80px;
-            background-color: #f9f9f9;
+            background-color: var(--input-border);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -342,14 +342,14 @@
         }
 
         .inventory-slot:hover {
-            background-color: #f0f0f0;
+            background-color: var(---input-bg);
             transform: translateY(-2px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .inventory-slot.active {
             border: 2px solid var(--primary);
-            background-color: #e8f1ff;
+            background-color: var(---input-bg);
         }
 
         .inventory-slot::after {
@@ -391,11 +391,11 @@
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.2s;
-            background-color: white;
+            background-color: var(--input-border);
         }
 
         .item:hover {
-            background-color: #f0f0f0;
+            background-color: var(---input-bg);
             transform: translateY(-2px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             border-color: var(--primary);
@@ -851,6 +851,172 @@
     font-size: 0.9rem;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #3a5a8c;
+            --secondary: #e94560;
+            --dark: #1e1e2d;
+            --dark-light: #2a2a3c;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #fd7e14;
+            --info: #17a2b8;
+            
+            /* Цвета для светлой темы */
+            --bg-color: #f5f7fa;
+            --text-color: #333;
+            --panel-bg: white;
+            --panel-border: #eee;
+            --input-bg: white;
+            --input-border: #ddd;
+            --preview-bg: #f9f9f9;
+        }
+
+        /* Темная тема */
+        .dark-theme {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --panel-bg: #1e1e1e;
+            --panel-border: #333;
+            --input-bg: #2a2a2a;
+            --input-border: #444;
+            --preview-bg: #2a2a2a;
+            --gray: #a2c2c4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Стилизация скроллбара */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--panel-bg);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Переключатель темы */
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--panel-bg);
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .theme-switcher label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .theme-switcher input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: var(--input-bg);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--input-border);
+        }
+
+        .theme-switcher input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            top: 1px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .theme-switcher input[type="checkbox"]:checked::before {
+            transform: translateX(20px);
+        }
+
+        /* Остальные стили остаются такими же, но с заменой цветов на CSS-переменные */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 0;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid var(--panel-border);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid var(--panel-border);
+            border-radius: 4px;
+            background-color: var(--preview-bg);
+            min-height: 80px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -860,7 +1026,13 @@
             <h1><i class="fas fa-code"></i> CLscript Generator</h1>
             <p>Инструмент для создания скриптов персонажей в SCP: Secret Laboratory</p>
         </header>
-        
+            <div class="theme-switcher">
+        <label>
+            <i class="fas fa-moon"></i>
+            <input type="checkbox" id="themeToggle">
+            <i class="fas fa-sun"></i>
+        </label>
+    </div>
         <div class="panel">
             <div class="panel-header">
                 <i class="fas fa-file-export"></i> Экспорт
@@ -1461,6 +1633,24 @@
 
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Проверяем сохраненную тему
+            if (localStorage.getItem('darkTheme') === 'enabled') {
+                document.body.classList.add('dark-theme');
+                themeToggle.checked = true;
+            }
+            
+            // Обработчик изменения темы
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('dark-theme');
+                    localStorage.setItem('darkTheme', 'enabled');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    localStorage.setItem('darkTheme', 'disabled');
+                }
+            });
             // Инициализация слайдеров и их числовых полей
             initSlider('hpSlider', 'hpValue', 'hpInput');
             initSlider('ammo556Slider', 'ammo556Value', 'ammo556Input');

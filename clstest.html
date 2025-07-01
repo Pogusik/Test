@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLscript Generator | SCP:SL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #3a5a8c;
+            --secondary: #e94560;
+            --dark: #1e1e2d;
+            --dark-light: #2a2a3c;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #fd7e14;
+            --info: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 0;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            text-align: center;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .panel-header i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .slider-container-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .slider-container-wrapper > div {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .slider-container label {
+            width: 150px;
+            margin-right: 15px;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            width: 60px;
+            text-align: center;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        input[type="range"] {
+            flex-grow: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #e0e0e0;
+            border-radius: 4px;
+            outline: none;
+            margin-right: 15px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d13354;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .color-option.active {
+            border-color: var(--dark);
+            transform: scale(1.1);
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .format-btn {
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .format-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        .size-input {
+            width: 50px;
+            margin-left: 5px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            min-height: 80px;
+        }
+
+        .inventory {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .inventory-slot {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            min-height: 80px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inventory-slot:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .inventory-slot.active {
+            border: 2px solid var(--primary);
+            background-color: #e8f1ff;
+        }
+
+        .inventory-slot::after {
+            content: attr(data-slot);
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .item-search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .server-selector {
+            margin-bottom: 15px;
+        }
+
+        .server-selector select {
+            width: 100%;
+        }
+
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .item {
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background-color: white;
+        }
+
+        .item:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .item-id {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .custom-items-divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--gray);
+            font-weight: 500;
+            grid-column: 1 / -1;
+        }
+
+        .custom-items-divider::before,
+        .custom-items-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 10px;
+        }
+
+        .custom-items-divider img {
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+        }
+
+        /* Модальное окно выбора роли */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            background-color: var(--dark-light);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Боковые фильтры */
+        .filter-buttons {
+            width: 80px;
+            background-color: var(--dark);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            border-right: 1px solid #333;
+        }
+        
+        .filter-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .filter-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+        
+        .filter-btn.active {
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+        }
+        
+        .filter-btn img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+        }
+        
+        /* Основной контейнер с ролями */
+        .roles-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            background-color: var(--dark);
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        .roles-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-auto-rows: 25%; /* Каждая роль занимает 30% высоты контейнера */
+            gap: 12px;
+            padding: 5px;
+            overflow-y: auto;
+        }
+        
+        .role-option {
+            height: 100%; /* Заполняет всю высоту ячейки */
+            min-height: 0; /* Убирает ограничение минимальной высоты */
+            box-sizing: border-box; /* Учитывает padding в высоту */
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .role-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: currentColor;
+        }
+        
+        .role-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        
+        .role-option.selected {
+            box-shadow: 0 0 0 2px currentColor, 0 5px 15px rgba(0,0,0,0.4);
+        }
+        
+        .role-image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.3);
+            padding: 5px;
+            box-sizing: border-box;
+            transition: transform 0.3s;
+        }
+        
+        .role-option:hover .role-image {
+            transform: scale(1.1);
+        }
+        
+        .role-name {
+            font-weight: bold;
+            font-size: 13px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+        
+        /* Закрытие модального окна */
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 1001;
+        }
+        
+        .close-modal:hover {
+            color: var(--secondary);
+        }
+
+        .role-preview-card {
+            width: 100%;
+            height: 140px;
+            background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .role-preview-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            border-color: var(--primary);
+        }
+
+        .role-preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            opacity: 0.8;
+        }
+
+        .role-preview-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+        }
+
+        .role-preview-name {
+            color: white;
+            font-weight: 500;
+            font-size: 1.1rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+
+        .role-preview-placeholder {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .role-preview-icon {
+            font-size: 2rem;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 10px;
+        }
+
+        /* Группа панелей ролей и инфо */
+        .role-info-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .role-info-group .panel {
+            flex: 1;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .inventory {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .item-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .checkbox-group {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .modal-content {
+                flex-direction: column;
+                height: 90vh;
+            }
+            
+            .filter-buttons {
+                width: 100%;
+                flex-direction: row;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            
+            .roles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .role-info-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .inventory {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .item-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+                .role-preview-card {
+            width: 100%;
+            height: 600px; /* Фиксированная высота */
+            background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .role-preview-image {
+            width: 414px; /* Фиксированная ширина */
+            height: 600px; /* Фиксированная высота */
+            object-fit: cover;
+            position: absolute;
+            opacity: 0.8;
+        }
+            .role-preview-card {
+        width: 100%;
+        height: 600px;
+        background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .role-preview-image {
+        width: 414px;
+        height: 600px;
+        object-fit: cover;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.8;
+    }
+    .role-preview-card {
+    width: 100%;
+    height: auto;
+    background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-height: 140px; /* Минимальная высота для компактности */
+}
+
+.role-preview-image {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    position: relative;
+    opacity: 0.9;
+}
+
+.role-preview-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+}
+
+    .role-preview-card {
+        width: 100%;
+        height: 600px;
+        background: linear-gradient(135deg, #2a2a3c, #1e1e2d);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .role-preview-content {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .role-preview-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .role-preview-name {
+        position: relative;
+        z-index: 2;
+        color: white;
+        font-weight: 500;
+        font-size: 1.1rem;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        margin-bottom: 5px;
+    }
+            .char-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        /* Обновленный стиль для группы роли и инфо полей */
+        .role-info-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .role-info-group > .panel {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Стиль для панели патронов */
+        .ammo-panel {
+            flex: 1;
+            min-width: 100%;
+            margin-top: 0px;
+        }
+
+        /* Разделительная линия в инвентаре */
+        .custom-items-divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--gray);
+            font-weight: 500;
+            grid-column: 1 / -1;
+        }
+
+        .custom-items-divider::before,
+        .custom-items-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> CLscript Generator</h1>
+            <p>Инструмент для создания скриптов персонажей в SCP: Secret Laboratory</p>
+        </header>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fas fa-file-export"></i> Экспорт
+            </div>
+            <div class="panel-body">
+                <textarea id="exportOutput" class="form-control" readonly></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generateCLscript()">
+                        <i class="fas fa-cogs"></i> Сгенерировать CLscript
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fas fa-cog"></i> Основные параметры
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="playerID">ID игрока:</label>
+                    <input type="text" id="playerID" class="form-control" placeholder="SteamID, внутриигровой ID или ник">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nickname">НикНэйм:</label>
+                    <input type="text" id="nickname" class="form-control" placeholder="Серверное имя игрока">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="hpSlider">HP (Здоровье):</label>
+                    <input type="range" id="hpSlider" min="1" max="1000" value="100">
+                    <span id="hpValue" class="slider-value">100</span>
+                    <input type="number" id="hpInput" class="form-control" style="width: 80px; margin-left: 10px;" min="1" max="1000" value="100">
+                </div>
+            </div>
+        </div>
+        
+        <div class="role-info-group">
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-info-circle"></i> Инфополя
+                </div>
+                <div class="panel-body">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="nicknameCheckbox" checked>
+                            <label for="nicknameCheckbox">Никнэйм</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="badgeCheckbox">
+                            <label for="badgeCheckbox">Плашка</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="customInfoCheckbox">
+                            <label for="customInfoCheckbox">Кастом-инфо</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="roleCheckbox">
+                            <label for="roleCheckbox">Роль</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="unitNameCheckbox">
+                            <label for="unitNameCheckbox">Номер отряда</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="powerStatusCheckbox">
+                            <label for="powerStatusCheckbox">Ранг</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-user-tag"></i> Роль
+                </div>
+                <div class="panel-body">
+                    <input type="hidden" id="roleSelect" value="">
+                    <div class="role-preview-card" id="rolePreviewCard">
+                        <div class="role-preview-content" id="rolePreviewContent">
+                            <div class="role-preview-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="role-preview-placeholder">Выберите роль</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel ammo-panel">
+                <div class="panel-header">
+                    <i class="fas fa-bullseye"></i> Патроны
+                </div>
+                <div class="panel-body">
+                <div class="slider-container-wrapper">
+                    <div>
+                        <div class="slider-container">
+                            <label for="ammo556Slider">5.56x45:</label>
+                            <input type="range" id="ammo556Slider" min="0" max="500" value="0">
+                            <span id="ammo556Value" class="slider-value">0</span>
+                            <input type="number" id="ammo556Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label for="ammo762Slider">7.62x39:</label>
+                            <input type="range" id="ammo762Slider" min="0" max="500" value="0">
+                            <span id="ammo762Value" class="slider-value">0</span>
+                            <input type="number" id="ammo762Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="slider-container">
+                            <label for="ammo9Slider">9x19:</label>
+                            <input type="range" id="ammo9Slider" min="0" max="500" value="0">
+                            <span id="ammo9Value" class="slider-value">0</span>
+                            <input type="number" id="ammo9Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label for="ammo12Slider">12 калибр:</label>
+                            <input type="range" id="ammo12Slider" min="0" max="500" value="0">
+                            <span id="ammo12Value" class="slider-value">0</span>
+                            <input type="number" id="ammo12Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="slider-container">
+                            <label for="ammo44Slider">44 калибр:</label>
+                            <input type="range" id="ammo44Slider" min="0" max="500" value="0">
+                            <span id="ammo44Value" class="slider-value">0</span>
+                            <input type="number" id="ammo44Input" class="form-control" style="width: 80px; margin-left: 10px;" min="0" max="500" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fas fa-align-left"></i> Описание
+            </div>
+            <div class="panel-body">
+                <div class="format-buttons">
+                    <button class="format-btn" onclick="insertTag('b')"><i class="fas fa-bold"></i> Жирный</button>
+                    <button class="format-btn" onclick="insertTag('i')"><i class="fas fa-italic"></i> Курсив</button>
+                    <button class="format-btn" onclick="insertTag('size')">
+                        <i class="fas fa-text-height"></i> Размер
+                        <input type="number" id="sizeInput" class="size-input" min="10" max="50" value="20">
+                    </button>
+                    <button class="format-btn" onclick="insertTag('\\n')"><i class="fas fa-arrow-down"></i> Новая строка</button>
+                </div>
+                
+                <div class="color-palette">
+                    <div class="color-option" style="background-color: #FF96DE;" onclick="insertColor('#FF96DE')"></div>
+                    <div class="color-option" style="background-color: #FF0090;" onclick="insertColor('#FF0090')"></div>
+                    <div class="color-option" style="background-color: #FF1493;" onclick="insertColor('#FF1493')"></div>
+                    <div class="color-option" style="background-color: #C50000;" onclick="insertColor('#C50000')"></div>
+                    <div class="color-option" style="background-color: #228B22;" onclick="insertColor('#228B22')"></div>
+                    <div class="color-option" style="background-color: #A0A0A0;" onclick="insertColor('#A0A0A0')"></div>
+                    <div class="color-option" style="background-color: #98FB98;" onclick="insertColor('#98FB98')"></div>
+                    <div class="color-option" style="background-color: #4DFFB8;" onclick="insertColor('#4DFFB8')"></div>
+                    <div class="color-option" style="background-color: #FF6448;" onclick="insertColor('#FF6448')"></div>
+                    <div class="color-option" style="background-color: #DC143C;" onclick="insertColor('#DC143C')"></div>
+                    <div class="color-option" style="background-color: #50C878;" onclick="insertColor('#50C878')"></div>
+                    <div class="color-option" style="background-color: #4B5320;" onclick="insertColor('#4B5320')"></div>
+                    <div class="color-option" style="background-color: #00FFFF;" onclick="insertColor('#00FFFF')"></div>
+                    <div class="color-option" style="background-color: #FF9966;" onclick="insertColor('#FF9966')"></div>
+                    <div class="color-option" style="background-color: #ff0000;" onclick="insertColor('#ff0000')"></div>
+                    <div class="color-option" style="background-color: #00B7EB;" onclick="insertColor('#00B7EB')"></div>
+                    <div class="color-option" style="background-color: #960018;" onclick="insertColor('#960018')"></div>
+                    <div class="color-option" style="background-color: #EE7600;" onclick="insertColor('#EE7600')"></div>
+                    <div class="color-option" style="background-color: #32CD32;" onclick="insertColor('#32CD32')"></div>
+                    <div class="color-option" style="background-color: #BFFF00;" onclick="insertColor('#BFFF00')"></div>
+                    <div class="color-option" style="background-color: #FFFFFF;" onclick="insertColor('#FFFFFF')"></div>
+                    <div class="color-option" style="background-color: #000000;" onclick="insertColor('#000000')"></div>
+                    <div class="color-option" style="background-color: #727472;" onclick="insertColor('#727472')"></div>
+                    <div class="color-option" style="background-color: #944710;" onclick="insertColor('#944710')"></div>
+                </div>
+                
+                <textarea id="descriptionInput" class="form-control" placeholder="Введите описание с форматированием"></textarea>
+                <div class="char-counter" id="charCounter">0 символов</div>
+                <div class="preview-container" id="descriptionPreview"></div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fas fa-backpack"></i> Инвентарь
+            </div>
+            <div class="panel-body">
+                <div class="inventory">
+                    <div class="inventory-slot" id="slot1" onclick="selectSlot(1)" data-slot="Слот 1">Пусто</div>
+                    <div class="inventory-slot" id="slot2" onclick="selectSlot(2)" data-slot="Слот 2">Пусто</div>
+                    <div class="inventory-slot" id="slot3" onclick="selectSlot(3)" data-slot="Слот 3">Пусто</div>
+                    <div class="inventory-slot" id="slot4" onclick="selectSlot(4)" data-slot="Слот 4">Пусто</div>
+                    <div class="inventory-slot" id="slot5" onclick="selectSlot(5)" data-slot="Слот 5">Пусто</div>
+                    <div class="inventory-slot" id="slot6" onclick="selectSlot(6)" data-slot="Слот 6">Пусто</div>
+                    <div class="inventory-slot" id="slot7" onclick="selectSlot(7)" data-slot="Слот 7">Пусто</div>
+                    <div class="inventory-slot" id="slot8" onclick="selectSlot(8)" data-slot="Слот 8">Пусто</div>
+                </div>
+                
+                <div class="server-selector">
+                    <label for="serverSelect">Выберите сервер:</label>
+                    <select id="serverSelect" class="form-control" onchange="filterItemsByServer()">
+                        <option value="all">Все серверы</option>
+                        <option value="FullRP">FullRP</option>
+                        <option value="EventRP">EventRP</option>
+                        <option value="HardRP">HardRP</option>
+                        <option value="AutoEvents">AutoEvents</option>
+                        <option value="MediumRP">MediumRP</option>
+                        <option value="FunRP">FunRP</option>
+                        <option value="LightRP">LightRP</option>
+                        <option value="Classic">Classic</option>
+                    </select>
+                </div>
+                
+                <div class="item-search-container">
+                    <input type="text" id="itemSearch" class="form-control" placeholder="Поиск предметов..." oninput="filterItems()">
+                    <button class="btn btn-outline" onclick="clearItemSearch()">
+                        <i class="fas fa-times"></i> Очистить
+                    </button>
+                </div>
+                
+                <div class="item-list" id="itemList">
+                    <!-- Предметы будут добавляться динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выбора роли -->
+    <div class="modal" id="roleModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            
+            <!-- Боковые кнопки фильтров -->
+            <div class="filter-buttons">
+                <div class="filter-btn active" data-category="all">
+                    <img src="assets/as2/none.png" alt="Все">
+                </div>
+                <div class="filter-btn" data-category="chaos">
+                    <img src="assets/as2/PHlogo.png" alt="Хаос">
+                </div>
+                <div class="filter-btn" data-category="mtf">
+                    <img src="assets/as2/E11.png" alt="МОГ">
+                </div>
+                <div class="filter-btn" data-category="staff">
+                    <img src="assets/as2/Facul.png" alt="Персонал">
+                </div>
+                <div class="filter-btn" data-category="scp">
+                    <img src="assets/as2/SCP.png" alt="SCP">
+                </div>
+            </div>
+            
+            <!-- Основной контейнер с ролями -->
+            <div class="roles-container">
+                <input type="text" class="search-box" placeholder="Поиск ролей...">
+                
+                <div class="roles-grid" id="rolesGrid">
+                    <!-- Роли будут добавляться динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация слотов инвентаря
+        let inventory = {
+            1: { name: 'Пусто', id: '' },
+            2: { name: 'Пусто', id: '' },
+            3: { name: 'Пусто', id: '' },
+            4: { name: 'Пусто', id: '' },
+            5: { name: 'Пусто', id: '' },
+            6: { name: 'Пусто', id: '' },
+            7: { name: 'Пусто', id: '' },
+            8: { name: 'Пусто', id: '' }
+        };
+        
+        let currentSlot = 1; // Текущий выбранный слот инвентаря
+        
+        // Данные предметов
+        const allItems = [
+            // Обычные предметы
+            { name: 'Пусто', id: '', server: 'all' },
+            { name: 'Адреналин', id: 'Adrenaline', server: 'all' },
+            { name: 'Anti-SCP-207', id: 'AntiSCP207', server: 'all' },
+            { name: 'Тактическая броня', id: 'ArmorCombat', server: 'all' },
+            { name: 'Тяжёлая броня', id: 'ArmorHeavy', server: 'all' },
+            { name: 'Лёгкая броня', id: 'ArmorLight', server: 'all' },
+            { name: 'Монета', id: 'Coin', server: 'all' },
+            { name: 'Фонарик', id: 'Flashlight', server: 'all' },
+            { name: 'АК', id: 'GunAK', server: 'all' },
+            { name: 'COM-15', id: 'GunCOM15', server: 'all' },
+            { name: 'COM-18', id: 'GunCOM18', server: 'all' },
+            { name: 'COM-45', id: 'GunCom45', server: 'all' },
+            { name: 'Crossvec', id: 'GunCrossvec', server: 'all' },
+            { name: 'E11-SR', id: 'GunE11SR', server: 'all' },
+            { name: 'FSP-9', id: 'GunFSP9', server: 'all' },
+            { name: 'FRMG-0', id: 'GunFRMG0', server: 'all' },
+            { name: 'Logicer', id: 'GunLogicer', server: 'all' },
+            { name: 'Revolver', id: 'GunRevolver', server: 'all' },
+            { name: 'Shotgun', id: 'GunShotgun', server: 'all' },
+            { name: 'A7', id: 'GunA7', server: 'all' },
+            { name: 'Jailbird', id: 'Jailbird', server: 'all' },
+            { name: 'Устройство взлома', id: 'KeycardChaosInsurgency', server: 'all' },
+            { name: 'Ключ-карта инженера', id: 'KeycardContainmentEngineer', server: 'all' },
+            { name: 'Ключ-карта менеджера комплекса (Красная)', id: 'KeycardFacilityManager', server: 'all' },
+            { name: 'Ключ-карта охранника', id: 'KeycardGuard', server: 'all' },
+            { name: 'Ключ-карта уборщика', id: 'KeycardJanitor', server: 'all' },
+            { name: 'Ключ-карта капитана МОГ', id: 'KeycardMTFCaptain', server: 'all' },
+            { name: 'Ключ-карта оперативника МОГ', id: 'KeycardMTFOperative', server: 'all' },
+            { name: 'Ключ-карта рядового МОГ', id: 'KeycardMTFPrivate', server: 'all' },
+            { name: 'Ключ-карта О5', id: 'KeycardO5', server: 'all' },
+            { name: 'Ключ-карта научного руководителя', id: 'KeycardResearchCoordinator', server: 'all' },
+            { name: 'Ключ-карта научного сотрудника', id: 'KeycardScientist', server: 'all' },
+            { name: 'Ключ-карта менеджера зоны (Зелёная)', id: 'KeycardZoneManager', server: 'all' },
+            { name: 'Лампа', id: 'Lantern', server: 'all' },
+            { name: 'Аптечка', id: 'Medkit', server: 'all' },
+            { name: 'MicroHID', id: 'MicroHID', server: 'all' },
+            { name: 'Обезбол', id: 'Painkillers', server: 'all' },
+            { name: 'Particle Disruptor', id: 'ParticleDisruptor', server: 'all' },
+            { name: 'Рация', id: 'Radio', server: 'all' },
+            { name: 'SCP-018', id: 'SCP018', server: 'all' },
+            { name: 'SCP-1576', id: 'SCP1576', server: 'all' },
+            { name: 'SCP-1853', id: 'SCP1853', server: 'all' },
+            { name: 'SCP-207', id: 'SCP207', server: 'all' },
+            { name: 'SCP-2176', id: 'SCP2176', server: 'all' },
+            { name: 'SCP-244a', id: 'SCP244a', server: 'all' },
+            { name: 'SCP-244b', id: 'SCP244b', server: 'all' },
+            { name: 'SCP-268', id: 'SCP268', server: 'all' },
+            { name: 'SCP-330', id: 'SCP330', server: 'all' },
+            { name: 'SCP-500', id: 'SCP500', server: 'all' },
+            { name: 'Светошумовая граната', id: 'GrenadeFlash', server: 'all' },
+            { name: 'Осколочно-фугасная граната', id: 'GrenadeHE', server: 'all' },
+            
+            // Кастомные предметы для серверов
+            //fullRP
+            { name: 'ЭМИ-граната (Внешне: GrenadeFlash)', id: '0', server: 'FullRP' },
+{ name: 'Гранатомёт (Внешне: GunLogicer)', id: '1', server: 'FullRP' },
+{ name: 'Имплозионная граната (Внешне: GrenadeHE)', id: '2', server: 'FullRP' },
+{ name: 'Летальная инъекция (Внешне: Adrenaline)', id: '3', server: 'FullRP' },
+{ name: 'Особая монетка (Внешне: Coin)', id: '4', server: 'FullRP' },
+{ name: 'Быстроправ (Внешне: GunFSP9)', id: '5', server: 'FullRP' },
+{ name: 'SCP-127 (Внешне: GunCOM18)', id: '7', server: 'FullRP' },
+{ name: 'SCP-1499 (Внешне: SCP268)', id: '8', server: 'FullRP' },
+{ name: 'Снайперская винтовка (Внешне: GunE11SR)', id: '9', server: 'FullRP' },
+{ name: 'Транквилизатор (Внешне: GunCOM18)', id: '10', server: 'FullRP' },
+{ name: 'Маска для SCP-096 (Внешне: SCP268)', id: '11', server: 'FullRP' },
+{ name: 'SCP-714 (Внешне: Coin)', id: '12', server: 'FullRP' },
+{ name: 'AM-119 (Внешне: SCP500)', id: '13', server: 'FullRP' },
+{ name: 'SCP-2818 (Внешне: GunE11SR)', id: '14', server: 'FullRP' },
+{ name: 'C4-119 (Внешне: GrenadeHE)', id: '15', server: 'FullRP' },
+{ name: 'Пульт удалённого управления дверьми (Внешне: GunCOM18)', id: '16', server: 'FullRP' },
+{ name: 'Отражающий щит (Внешне: SCP268)', id: '18', server: 'FullRP' },
+{ name: 'ХимСвет (Внешне: Flashlight)', id: '19', server: 'FullRP' },
+{ name: 'Ударная граната (Внешне: GrenadeHE)', id: '20', server: 'FullRP' },
+{ name: 'Ударная светошумовая ганата (Внешне: GrenadeFlash)', id: '21', server: 'FullRP' },
+{ name: 'Кастомная карта (Внешне: KeycardMTFOperative)', id: '29', server: 'FullRP' },
+{ name: 'Защитный костюм (Внешне: ArmorHeavy)', id: '31', server: 'FullRP' },
+{ name: 'Звуковая ловушка (Внешне: Coin)', id: '32', server: 'FullRP' },
+{ name: 'Носитель Scp079 (Внешне: KeycardChaosInsurgency)', id: '33', server: 'FullRP' },
+{ name: 'Сигнальный пистолет (Внешне: GunRevolver)', id: '51', server: 'FullRP' },
+{ name: 'SCP-055 (Внешне: SCP268)', id: '53', server: 'FullRP' },
+{ name: 'Инъектор с обезболивающим (Внешне: Adrenaline)', id: '54', server: 'FullRP' },
+{ name: 'Морфина сульфат (Внешне: Painkillers)', id: '55', server: 'FullRP' },
+{ name: 'Боевой стимулятор (Внешне: Adrenaline)', id: '56', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=green>[зелёный]</color> (Внешне: Flashlight)', id: '69', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=green>[зелёный]</color> (Внешне: Flashlight)', id: '70', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=blue>[синий]</color> (Внешне: Flashlight)', id: '71', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=red>[красный]</color> (Внешне: Flashlight)', id: '72', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=yellow>[жёлтый]</color> (Внешне: Flashlight)', id: '73', server: 'FullRP' },
+{ name: 'Химический Источник Света <color=white>[белый]</color> (Внешне: Flashlight)', id: '74', server: 'FullRP' },
+{ name: 'Тайзер (Внешне: GunCOM18)', id: '100', server: 'FullRP' },
+{ name: 'FN P90-H (Внешне: GunCrossvec)', id: '201', server: 'FullRP' },
+{ name: 'РГМ-40 «Кастет» (Внешне: GunRevolver)', id: '202', server: 'FullRP' },
+{ name: 'Автомат Калашникова (Внешне: GunAK)', id: '203', server: 'FullRP' },
+{ name: 'Ручной пулемёт Калашникова (Внешне: GunAK)', id: '204', server: 'FullRP' },
+{ name: 'Uzi-H (Внешне: GunFSP9)', id: '205', server: 'FullRP' },
+{ name: 'ПП СР-2 «Вереск» (Внешне: GunFSP9)', id: '208', server: 'FullRP' },
+{ name: 'Переносной огнемет FW-139-H (Внешне: MicroHID)', id: '210', server: 'FullRP' },
+{ name: 'HK-416 (Внешне: GunE11SR)', id: '211', server: 'FullRP' },
+{ name: 'HK-USP (Внешне: GunCOM15)', id: '212', server: 'FullRP' },
+{ name: 'DP-12 (Внешне: GunShotgun)', id: '213', server: 'FullRP' },
+{ name: 'MG 36 (Внешне: GunFRMG0)', id: '214', server: 'FullRP' },
+{ name: 'Лазерная винтовка (Внешне: GunE11SR)', id: '220', server: 'FullRP' },
+{ name: 'Лазерный карабин (Внешне: GunE11SR)', id: '221', server: 'FullRP' },
+{ name: 'Лазерный пулемёт (Внешне: GunFRMG0)', id: '222', server: 'FullRP' },
+{ name: 'Лазерный пистолет (Внешне: GunCOM15)', id: '223', server: 'FullRP' },
+{ name: 'Клетка для SCP-173 (Внешне: Medkit)', id: '321', server: 'FullRP' },
+{ name: 'PAR-Z02-SE (Внешне: Radio)', id: '401', server: 'FullRP' },
+{ name: 'PAR-S11-SE (Внешне: Radio)', id: '402', server: 'FullRP' },
+{ name: 'PPC-440-VE «Фабий» (Внешне: Radio)', id: '403', server: 'FullRP' },
+{ name: 'PAR-%$@-SE (Внешне: Radio)', id: '404', server: 'FullRP' },
+{ name: 'PAR-E11-SE (Внешне: Radio)', id: '405', server: 'FullRP' },
+{ name: 'Мина (Внешне: Coin)', id: '432', server: 'FullRP' },
+{ name: 'Стаканчик с Эспрессо (Внешне: SCP500)', id: '500', server: 'FullRP' },
+{ name: 'Стаканчик с  Американо (Внешне: SCP500)', id: '501', server: 'FullRP' },
+{ name: 'Стаканчик с  Латте (Внешне: SCP500)', id: '502', server: 'FullRP' },
+{ name: 'Стаканчик с  Капучино (Внешне: SCP500)', id: '503', server: 'FullRP' },
+{ name: 'Стаканчик с  Раф (Внешне: SCP500)', id: '504', server: 'FullRP' },
+{ name: 'Стаканчик с  Макиато (Внешне: SCP500)', id: '505', server: 'FullRP' },
+{ name: 'Штурмовой щит (Внешне: KeycardGuard)', id: '555', server: 'FullRP' },
+{ name: 'Сумка (Внешне: SCP268)', id: '765', server: 'FullRP' },
+{ name: 'Аптечка (Внешне: Medkit)', id: '815', server: 'FullRP' },
+{ name: 'Ибупрофен (Внешне: Painkillers)', id: '816', server: 'FullRP' },
+{ name: 'Меч (Внешне: Jailbird)', id: '901', server: 'FullRP' },
+{ name: 'Святой Меч (Внешне: Jailbird)', id: '902', server: 'FullRP' },
+{ name: 'Серебряный Меч (Внешне: Jailbird)', id: '903', server: 'FullRP' },
+{ name: 'Катана (Внешне: Jailbird)', id: '904', server: 'FullRP' },
+{ name: 'Святая Катана (Внешне: Jailbird)', id: '905', server: 'FullRP' },
+{ name: 'Серебряная Катана (Внешне: Jailbird)', id: '906', server: 'FullRP' },
+{ name: 'Лук (Внешне: GunCOM15)', id: '907', server: 'FullRP' },
+{ name: 'Снайперская винтовка Драгунова (Внешне: GunAK)', id: '991', server: 'FullRP' },
+{ name: 'Шаблон гранаты (Внешне: GrenadeFlash)', id: '1478', server: 'FullRP' },
+{ name: 'Газовая граната (Внешне: GrenadeFlash)', id: '1490', server: 'FullRP' },
+{ name: 'Прибор Ночного Видения V1 (Внешне: SCP268)', id: '2000', server: 'FullRP' },
+{ name: 'Прибор Ночного Видения V2 (Внешне: SCP268)', id: '2001', server: 'FullRP' },
+{ name: 'Прибор Ночного Видения V3 (Внешне: SCP268)', id: '2002', server: 'FullRP' },
+{ name: 'Якорь Реальности Скрентона (Внешне: Coin)', id: '4000', server: 'FullRP' },
+// EVRP
+            { name: '2002 EventRP Item', id: '0', server: 'EventRP' },
+            { name: '3003 HardRP Item', id: '0', server: 'HardRP' },
+            { name: '4004 AutoEvents Item', id: '0', server: 'AutoEvents' },
+            { name: '5005 MediumRP Item', id: '0', server: 'MediumRP' },
+            { name: '6006 FunRP Item', id: '0', server: 'FunRP' },
+            { name: '7007 LightRP Item', id: '0', server: 'LightRP' },
+            { name: '8008 Classic Item', id: '0', server: 'Classic' }
+        ];
+        
+        // Данные ролей с индивидуальными цветами
+        const rolesData = [
+            {
+                id: "ChaosConscript",
+                name: "Новобранец ПХ",
+                image: "assets/as2/asmodel/PH.png",
+                icon: "assets/as2/PH.png",
+                category: "chaos",
+                color: "#559101"
+            },
+            {
+                id: "ChaosMarauder",
+                name: "Усмиритель ПХ",
+                image: "assets/as2/asmodel/PH.png",
+                icon: "assets/as2/PH.png",
+                category: "chaos",
+                color: "#066328"
+            },
+            {
+                id: "ChaosRepressor",
+                name: "Мародёр ПХ",
+                image: "assets/as2/asmodel/PH.png",
+                icon: "assets/as2/PH.png",
+                category: "chaos",
+                color: "#15853D"
+            },
+            {
+                id: "ChaosRifleman",
+                name: "Стрелок ПХ",
+                image: "assets/as2/asmodel/PH.png",
+                icon: "assets/as2/PH.png",
+                category: "chaos",
+                color: "#008F1C"
+            },
+            {
+                id: "NtfCaptain",
+                name: "Капитан МОГ",
+                image: "assets/as2/asmodel/MTF.png",
+                icon: "assets/as2/MTF.png",
+                category: "mtf",
+                color: "#003DCA"
+            },
+            {
+                id: "NtfPrivate",
+                name: "Рядовой МОГ",
+                image: "assets/as2/asmodel/MTF.png",
+                icon: "assets/as2/MTF.png",
+                category: "mtf",
+                color: "#70C3FF"
+            },
+            {
+                id: "NtfSergeant",
+                name: "Сержант МОГ",
+                image: "assets/as2/asmodel/MTF.png",
+                icon: "assets/as2/MTF.png",
+                category: "mtf",
+                color: "#0096FF"
+            },
+            {
+                id: "NtfSpecialist",
+                name: "Специалист МОГ",
+                image: "assets/as2/asmodel/MTF.png",
+                icon: "assets/as2/MTF.png",
+                category: "mtf",
+                color: "#00D9FF"
+            },
+            {
+                id: "FacilityGuard",
+                name: "Охранник",
+                image: "assets/as2/asmodel/Guard.png",
+                icon: "assets/as2/Guard.png",
+                category: "staff",
+                color: "#5B6370"
+            },
+            {
+                id: "Scientist",
+                name: "Учёный",
+                image: "assets/as2/asmodel/Sines.png",
+                icon: "assets/as2/Sines.png",
+                category: "staff",
+                color: "#FFFF7C"
+            },
+            {
+                id: "ClassD",
+                name: "Класс Д",
+                image: "assets/as2/asmodel/ClassD.png",
+                icon: "assets/as2/ClassD.png",
+                category: "staff",
+                color: "#FF8E00"
+            },
+            {
+                id: "Scp049",
+                name: "SCP-049",
+                image: "assets/as2/asmodel/049.png",
+                icon: "assets/as2/049.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp0492",
+                name: "SCP-049-2",
+                image: "assets/as2/asmodel/049-2.png",
+                icon: "assets/as2/049-2.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp079",
+                name: "SCP-079",
+                image: "assets/as2/asmodel/079.png",
+                icon: "assets/as2/079.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp096",
+                name: "SCP-096",
+                image: "assets/as2/asmodel/096.png",
+                icon: "assets/as2/096.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp106",
+                name: "SCP-106",
+                image: "assets/as2/asmodel/106.png",
+                icon: "assets/as2/106.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp173",
+                name: "SCP-173",
+                image: "assets/as2/asmodel/173.png",
+                icon: "assets/as2/173.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp3114",
+                name: "SCP-3114",
+                image: "assets/as2/asmodel/3114.png",
+                icon: "assets/as2/3114.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Scp939",
+                name: "SCP-939",
+                image: "assets/as2/asmodel/939.png",
+                icon: "assets/as2/939.png",
+                category: "scp",
+                color: "#EC2222"
+            },
+            {
+                id: "Tutorial",
+                name: "Обучение",
+                image: "assets/as2/asmodel/Tutor.png",
+                icon: "assets/as2/Tutor.png",
+                category: "other",
+                color: "#F700FD"
+            }
+        ];
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация слайдеров и их числовых полей
+            initSlider('hpSlider', 'hpValue', 'hpInput');
+            initSlider('ammo556Slider', 'ammo556Value', 'ammo556Input');
+            initSlider('ammo762Slider', 'ammo762Value', 'ammo762Input');
+            initSlider('ammo9Slider', 'ammo9Value', 'ammo9Input');
+            initSlider('ammo12Slider', 'ammo12Value', 'ammo12Input');
+            initSlider('ammo44Slider', 'ammo44Value', 'ammo44Input');
+            
+            // Обновление предпросмотра описания
+            document.getElementById('descriptionInput').addEventListener('input', updatePreview);
+            
+            // Выделяем первый слот инвентаря
+            selectSlot(1);
+            
+            // Инициализация списка предметов
+            filterItems();
+            
+            // Инициализация модального окна ролей
+            initRoleModal();
+            
+            // Добавляем анимацию для уведомлений
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(20px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+        
+        // Инициализация слайдера с привязкой к числовому полю
+        function initSlider(sliderId, valueId, inputId) {
+            const slider = document.getElementById(sliderId);
+            const value = document.getElementById(valueId);
+            const input = document.getElementById(inputId);
+            
+            slider.addEventListener('input', function() {
+                value.textContent = this.value;
+                input.value = this.value;
+            });
+            
+            input.addEventListener('input', function() {
+                const val = Math.min(Math.max(this.value, slider.min), slider.max);
+                slider.value = val;
+                value.textContent = val;
+                this.value = val;
+            });
+        }
+        
+        // Функция для выбора слота инвентаря
+        function selectSlot(slot) {
+            // Убираем выделение со всех слотов
+            for (let i = 1; i <= 8; i++) {
+                document.getElementById('slot' + i).classList.remove('active');
+            }
+            // Выделяем выбранный слот
+            document.getElementById('slot' + slot).classList.add('active');
+            currentSlot = slot;
+        }
+        
+        // Функция для выбора предмета
+        function selectItem(name, id) {
+            inventory[currentSlot] = { name: name, id: id };
+            document.getElementById('slot' + currentSlot).textContent = name;
+        }
+        
+        // Функция для очистки слота
+        function clearSlot(slot) {
+            inventory[slot] = { name: 'Пусто', id: '' };
+            document.getElementById('slot' + slot).textContent = 'Пусто';
+        }
+        
+        // Функция для вставки тегов форматирования
+         function insertTag(tag) {
+            const textarea = document.getElementById('descriptionInput');
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(startPos, endPos);
+            const beforeText = textarea.value.substring(0, startPos);
+            const afterText = textarea.value.substring(endPos);
+            
+            if (tag === '\\n') {
+                textarea.value = beforeText + '\\n' + afterText;
+            } 
+            else if (tag === 'size') {
+                const size = document.getElementById('sizeInput').value;
+                textarea.value = beforeText + `<size=${size}>${selectedText}</size>` + afterText;
+            }
+            else if (tag.startsWith('color=')) {
+                // Обработка цвета с закрытием предыдущего цвета
+                const color = tag.split('=')[1];
+                let newBeforeText = beforeText;
+                
+                // Проверяем, есть ли незакрытый цвет перед курсором
+                const lastColorOpen = newBeforeText.lastIndexOf('<color=');
+                const lastColorClose = newBeforeText.lastIndexOf('</color>');
+                
+                if (lastColorOpen > lastColorClose) {
+                    // Находим цвет предыдущего тега
+                    const prevColorStart = newBeforeText.indexOf('=', lastColorOpen) + 1;
+                    const prevColorEnd = newBeforeText.indexOf('>', prevColorStart);
+                    const prevColor = newBeforeText.substring(prevColorStart, prevColorEnd);
+                    
+                    // Закрываем предыдущий цвет
+                    newBeforeText = newBeforeText + '</color>';
+                    // Открываем новый цвет
+                    textarea.value = newBeforeText + `<color=${color}>${selectedText}</color>` + `<color=${prevColor}>` + afterText;
+                } else {
+                    // Просто вставляем новый цвет
+                    textarea.value = newBeforeText + `<color=${color}>${selectedText}</color>` + afterText;
+                }
+            }
+            else {
+                textarea.value = beforeText + `<${tag}>${selectedText}</${tag}>` + afterText;
+            }
+            
+            updatePreview();
+            updateCharCounter();
+        }
+        
+        // Функция для вставки цвета
+function insertColor(color) {
+            const textarea = document.getElementById('descriptionInput');
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(startPos, endPos);
+            const beforeText = textarea.value.substring(0, startPos);
+            const afterText = textarea.value.substring(endPos);
+            
+            let newBeforeText = beforeText;
+            let newAfterText = afterText;
+            
+            // Проверяем, есть ли незакрытый цвет перед курсором
+            const lastColorOpen = newBeforeText.lastIndexOf('<color=');
+            const lastColorClose = newBeforeText.lastIndexOf('</color>');
+            
+            if (lastColorOpen > lastColorClose) {
+                // Находим цвет предыдущего тега
+                const prevColorStart = newBeforeText.indexOf('=', lastColorOpen) + 1;
+                const prevColorEnd = newBeforeText.indexOf('>', prevColorStart);
+                const prevColor = newBeforeText.substring(prevColorStart, prevColorEnd);
+                
+                // Закрываем предыдущий цвет
+                newBeforeText = newBeforeText + '</color>';
+                // Открываем новый цвет и сохраняем предыдущий для afterText
+                newAfterText = `<color=${prevColor}>` + afterText;
+            }
+            
+            textarea.value = newBeforeText + `<color=${color}>${selectedText}</color>` + newAfterText;
+            
+            updatePreview();
+            updateCharCounter();
+        }
+        function updateCharCounter() {
+            const text = document.getElementById('descriptionInput').value;
+            document.getElementById('charCounter').textContent = `${text.length} символов`;
+        }
+
+        // Инициализация счетчика символов
+        document.getElementById('descriptionInput').addEventListener('input', updateCharCounter);
+        // Обновление предпросмотра описания
+        function updatePreview() {
+            let text = document.getElementById('descriptionInput').value;
+            // Заменяем \n на <br>
+            text = text.replace(/\\n/g, '<br>');
+            // Заменяем теги форматирования
+            text = text.replace(/<b>(.*?)<\/b>/g, '<b>$1</b>');
+            text = text.replace(/<i>(.*?)<\/i>/g, '<i>$1</i>');
+            text = text.replace(/<size=(.*?)>(.*?)<\/size>/g, '<span style="font-size:$1px">$2</span>');
+            text = text.replace(/<color=(.*?)>(.*?)<\/color>/g, '<span style="color:$1">$2</span>');
+            
+            document.getElementById('descriptionPreview').innerHTML = text;
+        }
+        
+        // Функция для расчета суммы инфополей
+        function calculateInfoSum() {
+            let sum = 0;
+            if (document.getElementById('nicknameCheckbox').checked) sum += Math.pow(2, 0);
+            if (document.getElementById('badgeCheckbox').checked) sum += Math.pow(2, 1);
+            if (document.getElementById('customInfoCheckbox').checked) sum += Math.pow(2, 2);
+            if (document.getElementById('roleCheckbox').checked) sum += Math.pow(2, 3);
+            if (document.getElementById('unitNameCheckbox').checked) sum += Math.pow(2, 4);
+            if (document.getElementById('powerStatusCheckbox').checked) sum += Math.pow(2, 5);
+            return sum;
+        }
+        
+        // Функция для генерации CLscript
+function generateCLscript() {
+    const playerID = document.getElementById('playerID').value;
+    const description = document.getElementById('descriptionInput').value;
+    const nickname = document.getElementById('nickname').value;
+    const hp = document.getElementById('hpSlider').value;
+    
+    // Получаем выбранную роль
+    const role = document.getElementById('roleSelect').value || ''; // Добавляем пустую строку, если роль не выбрана
+    
+    // Получаем предметы инвентаря
+    let items = [];
+    for (let i = 1; i <= 8; i++) {
+        if (inventory[i].id) {
+            items.push(inventory[i].id);
+        } else {
+            items.push('');
+        }
+    }
+    
+    // Формируем строку патронов
+    const ammo556 = document.getElementById('ammo556Slider').value;
+    const ammo762 = document.getElementById('ammo762Slider').value;
+    const ammo9 = document.getElementById('ammo9Slider').value;
+    const ammo12 = document.getElementById('ammo12Slider').value;
+    const ammo44 = document.getElementById('ammo44Slider').value;
+    
+    const ammoString = `Nato556:${ammo556},Nato762:${ammo762},Nato9:${ammo9},Ammo12Gauge:${ammo12},Ammo44Cal:${ammo44}`;
+    
+    // Рассчитываем сумму инфополей
+    const infoSum = calculateInfoSum();
+    
+    // Формируем итоговую строку с учетом роли
+    const clscript = `clscript ${playerID};${description};${nickname};${hp};${role},${items.join(',')};${ammoString};${infoSum}`;
+    
+    document.getElementById('exportOutput').value = clscript;
+}
+        
+        // Функция для копирования в буфер обмена
+        function copyToClipboard() {
+            const exportOutput = document.getElementById('exportOutput');
+            exportOutput.select();
+            document.execCommand('copy');
+            
+            // Показываем уведомление
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = 'var(--success)';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '4px';
+            notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            notification.style.zIndex = '1000';
+            notification.style.animation = 'fadeIn 0.3s, fadeOut 0.3s 2s forwards';
+            notification.innerHTML = '<i class="fas fa-check-circle"></i> CLscript скопирован в буфер обмена!';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 2500);
+        }
+        
+        // Функция для фильтрации предметов по серверу
+        function filterItems() {
+            const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
+            const serverSelect = document.getElementById('serverSelect').value;
+            const itemList = document.getElementById('itemList');
+            
+            itemList.innerHTML = '';
+            
+            // Фильтруем предметы
+            const filteredItems = allItems.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchQuery) || 
+                                     item.id.toLowerCase().includes(searchQuery);
+                
+                // Если выбран "Все серверы", показываем только обычные предметы
+                if (serverSelect === 'all') {
+                    return matchesSearch && item.server === 'all';
+                }
+                
+                // Иначе показываем предметы для выбранного сервера и общие
+                return matchesSearch && (item.server === serverSelect || item.server === 'all');
+            });
+            
+            // Разделяем обычные и кастомные предметы
+            const regularItems = filteredItems.filter(item => item.server === 'all');
+            const customItems = filteredItems.filter(item => item.server !== 'all');
+            
+            // Добавляем обычные предметы
+            regularItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'item';
+                itemElement.innerHTML = `
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-id">ID: ${item.id || 'Нет'}</div>
+                `;
+                itemElement.onclick = () => selectItem(item.name, item.id);
+                itemList.appendChild(itemElement);
+            });
+            
+            // Добавляем разделитель, если есть кастомные предметы
+            if (customItems.length > 0 && serverSelect !== 'all') {
+                const divider = document.createElement('div');
+                divider.className = 'custom-items-divider';
+                divider.innerHTML = `Кастомные предметы`;
+                itemList.appendChild(divider);
+                
+                // Добавляем кастомные предметы
+                customItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'item';
+                    itemElement.innerHTML = `
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-id">ID: ${item.id || 'Нет'}</div>
+                    `;
+                    itemElement.onclick = () => selectItem(item.name, item.id);
+                    itemList.appendChild(itemElement);
+                });
+            }
+        }
+        
+        // Функция для очистки поиска
+        function clearItemSearch() {
+            document.getElementById('itemSearch').value = '';
+            filterItems();
+        }
+        
+        // Инициализация модального окна ролей
+        function initRoleModal() {
+            const modal = document.getElementById('roleModal');
+            const closeBtn = document.querySelector('.close-modal');
+            const rolesGrid = document.getElementById('rolesGrid');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const searchBox = document.querySelector('.search-box');
+            const rolePreviewCard = document.getElementById('rolePreviewCard');
+            
+            let selectedRole = null;
+            let currentCategory = 'all';
+            let searchQuery = '';
+            
+            // Открытие модального окна
+            rolePreviewCard.addEventListener('click', function() {
+                
+                modal.style.display = 'flex';
+                renderRoles();
+            });
+            
+            // Закрытие модального окна
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Клик вне модального окна
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Фильтрация по категориям
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.dataset.category;
+                    renderRoles();
+                });
+            });
+            
+            // Поиск
+            searchBox.addEventListener('input', function() {
+                searchQuery = this.value.toLowerCase();
+                renderRoles();
+            });
+            
+            // Рендер ролей
+            function renderRoles() {
+                rolesGrid.innerHTML = '';
+                
+                const filteredRoles = rolesData.filter(role => {
+                    const matchesCategory = currentCategory === 'all' || role.category === currentCategory;
+                    const matchesSearch = role.name.toLowerCase().includes(searchQuery) || 
+                                         role.id.toLowerCase().includes(searchQuery);
+                    return matchesCategory && matchesSearch;
+                });
+                
+                filteredRoles.forEach(role => {
+                    const roleElement = document.createElement('div');
+                    roleElement.className = 'role-option';
+                    roleElement.dataset.value = role.id;
+                    roleElement.style.color = role.color;
+                    roleElement.style.backgroundColor = `${role.color}20`;
+                    
+                    roleElement.innerHTML = `
+                        <img src="${role.icon}" class="role-image">
+                        <div class="role-name">${role.name}</div>
+                    `;
+                    
+                    roleElement.addEventListener('click', function() {
+                        if (selectedRole) {
+                            selectedRole.classList.remove('selected');
+                        }
+                        this.classList.add('selected');
+                        selectedRole = this;
+                        
+                        // Сохраняем выбранную роль
+                        document.getElementById('roleSelect').value = role.id;
+                        
+                        // Обновляем карточку предпросмотра роли
+                        const rolePreviewCard = document.getElementById('rolePreviewCard');
+                        const rolePreviewContent = document.getElementById('rolePreviewContent');
+                        
+                        rolePreviewCard.style.background = `linear-gradient(135deg, ${role.color}30, ${role.color}10)`;
+                        rolePreviewCard.style.borderColor = role.color;
+                        
+                        rolePreviewContent.innerHTML = `
+                            <img src="${role.image}" class="role-preview-image">
+                            <div class="role-preview-name">${role.name}</div>
+                        `;
+                        
+                        // Закрываем модальное окно
+                        modal.style.display = 'none';
+                    });
+                    
+                    rolesGrid.appendChild(roleElement);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

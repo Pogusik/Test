@@ -2255,7 +2255,89 @@
 { name: 'Гранатомет (Внешне: GunE11SR)', id: '9213', server: 'Classic' },
 { name: 'Мельта Винтовка (Внешне: GunShotgun)', id: '9214', server: 'Classic' },
         ];
-        
+        function getItemsForCurrentServer() {
+            const serverSelect = document.getElementById('serverSelect').value;
+            const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
+            
+            return allItems.filter(item => {
+                // Проверяем соответствие серверу (или все серверы)
+                const serverMatch = serverSelect === 'all' ? item.server === 'all' : 
+                                    item.server === serverSelect || item.server === 'all';
+                
+                // Проверяем соответствие поисковому запросу
+                const searchMatch = item.name.toLowerCase().includes(searchQuery) || 
+                                   item.id.toString().toLowerCase().includes(searchQuery);
+                
+                return serverMatch && searchMatch;
+            });
+        }
+
+        // Функция для фильтрации предметов
+        function filterItems() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+            
+            const currentServer = document.getElementById('serverSelect').value;
+            const items = getItemsForCurrentServer();
+            
+            // Разделяем обычные и кастомные предметы
+            const regularItems = items.filter(item => item.server === 'all');
+            const customItems = items.filter(item => item.server !== 'all' && item.server === currentServer);
+            
+            // Добавляем обычные предметы
+            regularItems.forEach(item => {
+                addItemToItemList(item);
+            });
+            
+            // Добавляем разделитель и кастомные предметы, если они есть
+            if (customItems.length > 0 && currentServer !== 'all') {
+                const divider = document.createElement('div');
+                divider.className = 'custom-items-divider';
+                divider.innerHTML = `Кастомные предметы (${currentServer})`;
+                itemList.appendChild(divider);
+                
+                customItems.forEach(item => {
+                    addItemToItemList(item);
+                });
+            }
+        }
+
+        // Функция для добавления предмета в список
+        function addItemToItemList(item) {
+            const itemList = document.getElementById('itemList');
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item';
+            itemElement.innerHTML = `
+                <div class="item-name">${item.name}</div>
+                <div class="item-id">ID: ${item.id || 'Нет'}</div>
+            `;
+            itemElement.onclick = () => selectItem(item.name, item.id);
+            itemList.appendChild(itemElement);
+        }
+
+        // Функция для проверки доступности предмета на текущем сервере
+        function isItemAvailableForCurrentServer(itemId) {
+            const serverSelect = document.getElementById('serverSelect').value;
+            const items = allItems.filter(item => item.id === itemId);
+            
+            // Если предмет есть для всех серверов или для текущего сервера
+            return items.some(item => item.server === 'all' || item.server === serverSelect);
+        }
+
+        // Обработчик изменения сервера
+        document.getElementById('serverSelect').addEventListener('change', function() {
+            filterItems();
+            clearUnavailableItems();
+        });
+
+        // Функция для очистки предметов, недоступных на текущем сервере
+        function clearUnavailableItems() {
+            for (let i = 1; i <= 8; i++) {
+                if (inventory[i].id && !isItemAvailableForCurrentServer(inventory[i].id)) {
+                    clearSlot(i);
+                }
+            }
+        }
         // Данные ролей с индивидуальными цветами
         const rolesData = [
             {
@@ -2762,7 +2844,7 @@
         }
         
         // Функция для фильтрации предметов
-        function filterItems() {
+                function filterItems() {
             const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
             const serverSelect = document.getElementById('serverSelect').value;
             const itemList = document.getElementById('itemList');
@@ -2803,7 +2885,7 @@
             if (customItems.length > 0 && serverSelect !== 'all') {
                 const divider = document.createElement('div');
                 divider.className = 'custom-items-divider';
-                divider.innerHTML = `Кастомные предметы`;
+                divider.innerHTML = `Кастомные предметы (${serverSelect})`;
                 itemList.appendChild(divider);
                 
                 // Добавляем кастомные предметы
@@ -2818,6 +2900,27 @@
                     itemList.appendChild(itemElement);
                 });
             }
+        }
+
+        // Обработчик изменения сервера
+        document.getElementById('serverSelect').addEventListener('change', function() {
+            filterItems();
+            
+            // Очищаем инвентарь при смене сервера (опционально)
+            for (let i = 1; i <= 8; i++) {
+                if (inventory[i].id && !isItemAvailableForCurrentServer(inventory[i].id)) {
+                    clearSlot(i);
+                }
+            }
+        });
+
+        // Проверка доступности предмета для текущего сервера
+        function isItemAvailableForCurrentServer(itemId) {
+            const serverSelect = document.getElementById('serverSelect').value;
+            const item = allItems.find(i => i.id === itemId);
+            
+            if (!item) return false;
+            return item.server === 'all' || item.server === serverSelect;
         }
         
         // Функция для очистки поиска

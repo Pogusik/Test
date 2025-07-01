@@ -2930,21 +2930,17 @@
         }
         
         // Функция для импорта CLscript
-        function importCLscript() {
+function importCLscript() {
     const importInput = document.getElementById('importInput').value.trim();
     const errorElement = document.getElementById('importError');
     errorElement.textContent = '';
     
-    // Проверяем, начинается ли строка с clscript
     if (!importInput.startsWith('clscript ')) {
         errorElement.textContent = 'Ошибка: скрипт должен начинаться с "clscript "';
         return;
     }
     
-    // Удаляем "clscript " из начала строки
     const scriptBody = importInput.substring(9);
-    
-    // Разбиваем строку на части по точкам с запятой
     const parts = scriptBody.split(';');
     
     if (parts.length < 7) {
@@ -2953,6 +2949,9 @@
     }
     
     try {
+        // Получаем текущий выбранный сервер
+        const currentServer = document.getElementById('serverSelect').value;
+        
         // Первая часть содержит ID и роль
         const firstPart = parts[0].split(' ');
         if (firstPart.length < 2) {
@@ -2964,11 +2963,10 @@
         document.getElementById('playerID').value = firstPart[0] || '';
         
         // Устанавливаем роль
-// Устанавливаем роль
-const roleId = firstPart[1];
-document.getElementById('roleSelect').value = roleId;
-updateRolePreview(roleId);
-updatePreview(); // Обновляем цвет текста в предпросмотре
+        const roleId = firstPart[1];
+        document.getElementById('roleSelect').value = roleId;
+        updateRolePreview(roleId);
+        updatePreview();
         
         // Описание
         document.getElementById('descriptionInput').value = parts[1] || '';
@@ -2997,23 +2995,28 @@ updatePreview(); // Обновляем цвет текста в предпрос
             let itemName = 'Пусто';
             
             if (itemId) {
-                // Ищем предмет в базе
-                const foundItem = allItems.find(item => item.id === itemId);
+                // Сначала ищем предмет для текущего сервера
+                let foundItem = allItems.find(item => 
+                    item.id === itemId && (item.server === currentServer || item.server === 'all')
+                );
+                
+                // Если не найден для текущего сервера, ищем на других серверах
+                if (!foundItem && currentServer !== 'all') {
+                    foundItem = allItems.find(item => item.id === itemId);
+                }
                 
                 if (foundItem) {
-                    itemName = foundItem.name;
-                } else {
-                    // Если предмет не найден, проверяем, является ли он кастомным
-                    const serverSelect = document.getElementById('serverSelect').value;
-                    const isCustomItem = allItems.some(item => 
-                        item.id === itemId && item.server !== 'all' && item.server !== serverSelect
-                    );
-                    
-                    if (isCustomItem) {
-                        itemName = `Неизвестный кастомный предмет (ID: ${itemId})`;
-                    } else {
-                        itemName = `Неизвестный предмет (ID: ${itemId})`;
+                    // Если предмет найден для текущего сервера или это общий предмет
+                    if (foundItem.server === currentServer || foundItem.server === 'all') {
+                        itemName = foundItem.name;
+                    } 
+                    // Если предмет с другого сервера
+                    else {
+                        itemName = `[${foundItem.server}] ${foundItem.name}`;
                     }
+                } else {
+                    // Если предмет не найден вообще
+                    itemName = `Неизвестный предмет (ID: ${itemId})`;
                 }
             }
             
@@ -3021,7 +3024,7 @@ updatePreview(); // Обновляем цвет текста в предпрос
             document.getElementById('slot' + (i+1)).textContent = itemName;
         }
         
-        // Патроны
+        // Остальной код импорта (патроны, инфополя и т.д.)
         const ammoParts = parts[5].split(',');
         
         // Сбрасываем все патроны к 0
@@ -3100,7 +3103,6 @@ updatePreview(); // Обновляем цвет текста в предпрос
         errorElement.textContent = 'Ошибка при разборе скрипта: ' + e.message;
     }
 }
-
 // Функция для обновления превью роли
 function updateRolePreview(roleId) {
     const role = rolesData.find(r => r.id === roleId);
@@ -3252,5 +3254,342 @@ function showNotification(message, type) {
             }
         }
     </script>
+    
+        
+
+
+    <div class="disclaimer-panel" style="margin: 30px auto; max-width: 800px; background: var(--panel-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+    <div style="text-align: center;">
+        <p style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1em;">Данное приложение <strong style="color: var(--accent-color);">не является</strong> официальным продуктом FLX-project</p>
+        <p style="color: var(--gray); margin-bottom: 15px;">
+            Оно было создано сторонним разработчиком
+            <a href="#" id="dev-profile-link" style="color: var(--primary); text-decoration: none; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center;">
+                @pogusik
+                <img src="./assets/discord-icon.png" alt="Discord" style="width: 16px; height: 16px; margin-left: 5px;">
+            </a>
+            для ивентологов FLX-project.
+        </p>
+        <div style="background: rgba(114, 137, 218, 0.1); border-radius: 6px; padding: 10px; margin-top: 15px;">
+            <p style="color: var(--gray); font-size: 0.9em; margin: 0;">
+                <i class="fas fa-bug" style="margin-right: 5px;"></i>
+                По всем вопросам, баг-репортам и предложениям пишите в личные сообщения
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Мини-профиль пользователя -->
+<div class="mini-profile-modal" id="user-profile-modal">
+    <div class="mini-profile-content">
+        <span class="close-mini-profile">&times;</span>
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Загрузка профиля...</p>
+        </div>
+        <div class="profile-content" style="display: none;">
+            <div class="profile-banner" style="background-color: #ffffff;"></div>
+            <div class="profile-avatar-container">
+                <img src="https://cdn.discordapp.com/avatars/778668132541530132/72bff8cc9bcecca82c4b9f552ce60bed.webp?size=256" 
+                     class="profile-avatar" 
+                     onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                <div class="user-status status-online"></div>
+            </div>
+            <div class="profile-info">
+                <h3 class="profile-name">Pogusik</h3>
+                <p class="profile-username">@pogusik</p>
+                
+                <div class="profile-divider"></div>
+                
+                <div class="profile-badge">
+                    <i class="fas fa-code"></i>
+                    Разработчик CLscript Generator
+                </div>
+                
+                <div class="profile-actions">
+                    <a href="discord://-/users/778668132541530132" class="profile-button">
+                        <i class="fab fa-discord"></i>
+                        Написать в Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Discord профили */
+    .profile-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .profile-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        color: var(--text-color);
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .profile-link:hover {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .mini-profile-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+
+    .mini-profile-modal.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .mini-profile-content {
+        background-color: var(--panel-bg);
+        border: 1px solid var(--accent-color);
+        width: 340px;
+        max-width: 90%;
+        position: relative;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        transform: translateY(-20px);
+        transition: transform 0.3s;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .mini-profile-modal.active .mini-profile-content {
+        transform: translateY(0);
+    }
+
+    .close-mini-profile {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-color);
+        transition: color 0.2s;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+    }
+
+    .close-mini-profile:hover {
+        color: var(--accent-color);
+    }
+
+    .profile-banner {
+        height: 100px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .profile-avatar-container {
+        position: relative;
+        margin-top: -40px;
+        padding-left: 20px;
+        display: flex;
+        align-items: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 6px solid var(--panel-bg);
+        background-color: var(--panel-bg);
+        object-fit: cover;
+    }
+
+    .server-avatar {
+        border-radius: 25%;
+    }
+
+    .user-status {
+        position: absolute;
+        bottom: 10px;
+        left: 70px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 4px solid var(--panel-bg);
+    }
+
+    .status-online { background-color: #3ba55c; }
+    .status-idle { background-color: #faa61a; }
+    .status-dnd { background-color: #ed4245; }
+    .status-offline { background-color: #737f8d; }
+
+    .profile-info {
+        padding: 0 20px 20px;
+    }
+
+    .profile-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: var(--text-color);
+    }
+
+    .profile-username {
+        color: var(--gray);
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .profile-divider {
+        height: 1px;
+        background-color: var(--border-color);
+        margin: 15px 0;
+    }
+
+    .server-members {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .server-members-count {
+        font-size: 14px;
+        color: var(--text-color);
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .profile-button {
+        background-color: var(--primary);
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background-color 0.3s;
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .profile-button:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .profile-badge {
+        background-color: #9c84ef;
+        color: white;
+        font-size: 12px;
+        padding: 3px 6px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 15px;
+    }
+
+    .error-message {
+        color: #ff6b6b;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .loading {
+        padding: 40px;
+        text-align: center;
+        color: var(--text-color);
+    }
+
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top: 4px solid var(--primary);
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<script>
+    // Обработчики для модального окна профиля
+    const profileModal = document.getElementById('user-profile-modal');
+    const devProfileLink = document.getElementById('dev-profile-link');
+    const closeProfileBtn = document.querySelector('.close-mini-profile');
+
+    // Показать модальное окно
+    devProfileLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showProfileModal();
+    });
+
+    // Закрыть модальное окно
+    closeProfileBtn.addEventListener('click', closeProfileModal);
+
+    // Закрыть при клике вне окна
+    profileModal.addEventListener('click', function(e) {
+        if (e.target === profileModal) {
+            closeProfileModal();
+        }
+    });
+
+    function showProfileModal() {
+        profileModal.classList.add('active');
+        
+        // Имитация загрузки (можно удалить в реальном приложении)
+        setTimeout(() => {
+            document.querySelector('.loading').style.display = 'none';
+            document.querySelector('.profile-content').style.display = 'block';
+        }, 800);
+    }
+
+    function closeProfileModal() {
+        profileModal.classList.remove('active');
+        
+        // Сброс состояния
+        setTimeout(() => {
+            document.querySelector('.loading').style.display = 'flex';
+            document.querySelector('.profile-content').style.display = 'none';
+        }, 300);
+    }
+</script>
 </body>
 </html>

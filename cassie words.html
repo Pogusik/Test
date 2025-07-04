@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@latest/css/OverlayScrollbars.min.css">
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@latest/js/OverlayScrollbars.min.js"></script>
+<title>Проверка CASSIE</title>
+<style>
+html {
+  scroll-behavior: smooth;
+}
+body {
+    color: #fff;
+    background: url("https://i.imgur.com/FoYatdo.png");
+    background-size: cover; /* or contain */
+    background-repeat: no-repeat; /* Prevents image repetition */
+    overflow: hidden; 
+    font-family: Arial, sans-serif;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+}
+.cassie-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 3.5px solid #fff;
+  box-sizing: border-box;
+  padding: 10px;
+  width: fit-content; /* Ключевое изменение */
+  font-family: 'Roboto Mono', monospace;
+  background: Black;
+  margin: 0 auto; /* Центрирование по горизонтали */
+  align-items: center; /* Центрирование по вертикали */
+  justify-content: center; /*  Центрирование по вертикали */
+  transition: height 0.3s ease-in-out;
+}
+
+.cassie-container h1 {
+  margin: 0;
+  font-size: 2.6em;
+  text-align: center;
+}
+
+.cassie-container p {
+  margin: 0;
+  font-size: 0.8em;
+}
+#centered-container {
+    background-color: rgba(0,0,0,0.6); /* Or any background color you prefer */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 20px; /* Add some padding inside the container */
+    width: 900px;
+    height: 710px;
+    max-height: 710px;
+    box-shadow: 3px 1px 17px 3px rgba(255, 255, 255, 0.3); /* Adds a subtle shadow */
+    overflow: hidden;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    transition: max-height 0.7s ease-in, max-height 0.6s ease-out;
+}
+ #centered-container.collapsed {
+    max-height: 465px;
+    opacity: 1; /* Hide with opacity transition */
+    overflow: hidden;
+  }
+  .marked-word {
+    background-color: rgba(255, 0, 0, 0.7);
+  }
+  .title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .input-box {
+      margin: 4px;
+    border-radius: 4px;
+    border: 1px solid #f3f3f3;
+    background-color: rgba(0,0,0,0.6);
+    padding: 5px;
+    width: 400px;
+    height: 160px;
+    resize: none;
+    overflow-y: auto;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    color: #c2c2c2;
+  }
+
+  .result-box {
+    border-radius: 4px;
+    border: 1px solid #fff;
+    background-color: rgba(0,0,0,0.6);
+    padding: 5px;
+    width: 400px;
+    height: 160px;
+    resize: none;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  #fontSizeInput {
+      color: rgba(255,255,255,1);
+    border: 1px solid #fff;
+          background-color: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    width: 50px;
+  }
+  .container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    height: 200px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .input-area, .result-area {
+    width: 45%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .result-box {
+    width: 400px;
+    height: 160px;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  #wordList {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-top: 10px;
+    justify-content: space-around;
+  }
+  #wordList > div {
+    color: #fff;
+    border: 1px solid #ccc;
+    padding: 3px 10px;
+    margin: 2px;
+    cursor: pointer;
+    background-color: #313131;
+    font-size: 14px;
+    border-radius: 3px;
+    
+  }
+  #buttonContainer {
+      
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+#currentLetter {
+        border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid #f9f9f9;
+    background-color: #313131;
+    width: 27px; /* or a specific width if needed */
+    height: 27px; /* or a specific height if needed*/
+    display: flex; /* Enables centering using align-items and justify-content */
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    text-align: center; /*This is also needed to have correct text alignment*/
+    margin-left: -6px;
+}
+  #alphabetList {
+    border-radius: 4px;
+    display: none;
+    position: absolute;
+    background-color: #313131;
+    color: #fff;
+    border: 1px solid #f9f9f9;
+    padding: 5px;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 5px;
+    overflow-y: auto;
+    left: 1000%;
+  }
+  #alphabetList > div {
+    border-radius: 4px;
+    padding: 6px 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #ddd;
+  }
+
+  .other-chars {
+    font-style: italic;
+  }
+  #wordList .tooltiptext {
+    border: 1px solid #f9f9f9;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.87);
+    color: #fff;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 111111;
+    pointer-events: none;
+    transform: translateY(-100%) translateX(-30%);
+  }
+  #wordList .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  #wordList .tooltiptext {
+    visibility: hidden;
+  }
+
+  .explained-word img {
+    width: 9px;
+    height: 9px;
+    margin-right: 2px;
+    position: absolute;
+    filter: invert(1);
+  }
+#main-container {
+    display: flex; /* Make it a flex container */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+ 
+}
+
+#CS-container {
+    background-color: rgba(0,0,0,0.6); 
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 20px; 
+    box-shadow: 1px 1px 5px 1px rgba(255, 255, 255, 0.3); 
+    overflow: hidden;
+    width:82%; /* Remove justify-content and align-items from here */
+}
+
+#word-container {
+    width: 100%; /*Changed to 100%*/
+    overflow-y: auto;
+    max-height: 180px;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    overflow-x: hidden;
+}
+#word-container1 {
+    width: 100%; /*Changed to 100%*/
+    overflow-y: auto;
+    max-height: 350px;
+    transition: max-height 1s ease-in, opacity 1s ease-in, max-height 0.4s ease-out, opacity 0.4s ease-out;
+    overflow-x: hidden;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+  #word-container.collapsed {
+    max-height: 0;
+    opacity: 0; /* Hide with opacity transition */
+    overflow: hidden;
+  }
+    #word-container1.collapsed {
+    max-height: 0;
+    opacity: 0; /* Hide with opacity transition */
+    overflow: hidden;
+  }
+
+  #toggle-button {
+    font-weight: bold;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px; 
+    margin: 0 auto; /* Center horizontally */
+    display: block; /* Ensure it takes up the full available width */
+    width: fit-content; /*Keeps it from filling the parent width*/
+  }
+    #prevLetter {
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px; 
+    margin: 0 auto; /* Center horizontally */
+    display: block; /* Ensure it takes up the full available width */
+    width: fit-content; /*Keeps it from filling the parent width*/
+  }
+      #nextLetter {
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px; 
+    margin: 0 auto; /* Center horizontally */
+    display: block; /* Ensure it takes up the full available width */
+    width: fit-content; /*Keeps it from filling the parent width*/
+  }
+ .zz {
+  border: none;
+  border-top: 2px double #fff;
+  color: #fff;
+  overflow: visible;
+  text-align: center;
+  position: relative; /* Needed to position the image absolutely */
+  width: 100%;
+}
+  
+.ww {
+  border: none;
+  border-top: 3px double #fff;
+  color: #fff;
+  overflow: visible;
+  text-align: center;
+  position: relative; /* Needed to position the image absolutely */
+  height: 10px; /*Increased to accommodate image*/
+}
+
+.ww::after {
+  content: ""; /* Empty content */
+  background-image: url("https://i.imgur.com/G5LzCwB.png");
+  background-size: contain; 
+  background-repeat: no-repeat;
+  display: block; 
+  position: absolute;
+  left: 50%;
+    z-index: 3;
+  transform: translate(-50%, -50%); /* Centers the image */
+  width: 22px; /* Adjust as needed */
+  height: 21px; /* Adjust as needed */
+}
+.ww::before {
+  content: ""; /* Empty content */
+background: #181818;
+  background-size: contain; 
+  background-repeat: no-repeat;
+  display: block; 
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the image */
+  width: 20px; /* Adjust as needed */
+  height: 20px; /* Adjust as needed */
+}
+/* Only affects WebKit-based browsers (Chrome, Safari, etc.) */
+::-webkit-scrollbar {
+  width: 10px; /* Scrollbar width */
+  background-color: rgba(0,0,0,0); /* Track background color */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Thumb color */
+  border-radius: 5px; /* Rounded corners */
+}
+</style>
+</head>
+
+<body>
+    <div id="centered-container">
+<div class="cassie-container">
+  <h1>C. A. S. S. I. E.</h1>
+  <p>Central Autonomic Service System for Internal Emergencies</p>
+</div><br><br>
+<div class="container">
+  <div class="input-area">
+    <div>Размер текста: <input type="number" id="fontSizeInput" value="14" min="8" max="32"></div>
+    <textarea id="inputWords" class="input-box" placeholder="Введите слова здесь"></textarea>
+  </div>
+  <div class="result-area">
+    <div class="title">CASSIE не произносит:</div>
+    <div id="result">
+      <div class="result-box" id="result-content"></div>
+    </div>
+  </div>
+
+</div>
+  <div id="main-container"><div id="CS-container"><button id="toggle-button">Скрыть словарь CASSIE</button><div id="word-container1"> <hr class="zz"> <div id="buttonContainer">
+  <button id="prevLetter">К предыдущей букве</button>
+  <span id="currentLetter"></span>
+  <div id="alphabetList"></div>
+  <button id="nextLetter">К следующей букве</button>
+</div><hr class="ww"></div><div id="word-container">
+
+<ul id="wordList"></ul></div></div></div>
+
+
+<script>
+  const CContainer = document.getElementById("centered-container");
+  const wordContainer1 = document.getElementById("word-container1");
+  const wordContainer = document.getElementById("word-container");
+  const toggleButton = document.getElementById("toggle-button");
+  let isExpanded = true;
+  
+  toggleButton.addEventListener("click", () => {
+    isExpanded = !isExpanded;
+    if (isExpanded) {
+        CContainer.classList.remove("collapsed");
+        wordContainer1.classList.remove("collapsed");
+      wordContainer.classList.remove("collapsed");
+      toggleButton.textContent = "Скрыть словарь CASSIE";
+    } else {
+        CContainer.classList.add("collapsed");
+        wordContainer1.classList.add("collapsed");
+      wordContainer.classList.add("collapsed");
+      toggleButton.textContent = "Показать словарь CASSIE";
+    }
+  });
+  
+  
+const wordsToCheck = [
+"-Ish", "-Like", ".", ".G1", ".G2", ".G3", ".G4", ".G5", ".G6", ".G7", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "30", "40", "50", "60", "70", "80", "90", "yield_*", "yield_*.*", "pitch_*", "pitch_*.*", "jam_*_*",
+"A", "Able", "About", "Above", "Absolute", "Accepted", "Access", "Acid", "Acquired", "Across", "Activate", "Activated", "Activating", "Activation", "Activity", "Address", "Administer", "Administered", "Adrenaline", "Advanced", "Advise", "Again", "Against", "Agent", "Aid", "Airlock", "Alarm", "Alert", "Alive", "All", "AllGeneratorsEngaged", "AllRemaining", "AllSecured", "Alpha", "Already", "Also", "Always", "Am", "Amount", "Amplitude", "An", "Analog", "Analysis", "And", "Announcement", "Anomaly", "Answer", "Anti-", "Any", "Approach", "April", "Are", "Area", "Armory", "Around", "Arrest", "Arrival", "As", "At", "Attack", "Attempt", "Attention", "August", "Authorized", "Automatic", "Autonomic", "Autonomous", "Available", "Avoid", "AwaitingRecontainment", "Away", "B", "Back", "Backup", "Bad", "Ban", "Bank", "Base", "Basic", "Battery", "Be", "Because", "Been", "Begun", "Behavior", "Behind", "Being", "Believe", "Bell_End", "Bell_Start", "Below", "Beside", "Best", "Beta", "Between", "Big", "Billiard", "Biological", "Black", "Blast", "Blue", "Board", "Body", "Both", "Bottom", "Breach", "Break", "Breaker", "Broad", "Broadcast", "Build", "Built", "But", "By", "Byte", "Bytes", "C", "Cadet", "Calm", "Camera", "Can", "Cannot", "Cant", "Capture", "Card", "Cassie", "CassieSystem", "Cast", "Cause", "Caution", "Cease", "Celsius", "Center", "Centi", "Central", "Chamber", "Chaos", "ChaosInsurgency", "Charge", "Check", "Checkpoint", "Chi", "Class", "ClassD", "Clearance", "Close", "Closed", "Code", "Come", "Command", "Command2", "Commander", "Commencing", "Community", "Complete", "Completed", "Complex", "Condition", "Confirm", "Console", "Contain", "Contained", "ContainedSuccessfully", "Containment", "ContainmentUnit", "Contamination", "Continue", "Control", "Cooperate", "Core", "Correct", "Corrupted", "Corruption", "Could", "Course", "Credit", "Critical", "Current", "Curved", "D", "Damage", "Danger", "Dark", "Data", "Date", "Day", "Deactivate", "Deactivated", "Dead", "Deca", "December", "Deci", "Decision", "Decontamination", "Decrease", "Defense", "Degrees", "Delta", "Denied", "Designated", "Destroy", "Destroyed", "Destruct", "Destructed", "Destruction", "Detected", "Detonate", "Detonated", "Detonating", "Detonation", "Device", "Diagnostic", "Did", "Die", "Diesel", "Different", "Digital", "Dimension", "Disable", "Disabled", "Disables", "Discharge", "Disease", "Disengaged", "Distance", "Divided", "Division", "Do", "Doctor", "Does", "Done", "Door", "Doors", "Dose", "Down", "E", "Earth", "East", "Effect", "Either", "Electric", "Electromagnetism", "Elevator", "Elevators", "Emergency", "Empty", "Enable", "Enabled", "Enables", "End", "Engaged", "Engine", "Enough", "Enter", "Entire", "Entrance", "Epsilon", "Equal", "Equals", "Error", "Escape", "Escort", "Escort2", "Essential", "Estimated", "Eta", "Euclid", "Evacuate", "Evacuation", "Evasion", "Even", "Ever", "Every", "Evidence", "Except", "Exception", "Exclude", "Exclusion", "Execute", "Executed", "Executive", "Exit", "Expiration", "Explain", "Explosion", "Explosive", "Expunged", "External", "Extinguishment", "Extremely", "F", "Facility", "Fahrenheit", "Failed", "Failure", "False", "Far", "February", "Feel", "Femur", "Few", "Field", "Find", "Fine", "Finished", "Fire", "First", "For", "Force", "ForceOvercharge", "Forward", "Found", "Foundation", "Frequency", "Friday", "From", "Front", "Fuel", "Full", "G", "Game", "Gamma", "Gas", "Gasoline", "Gate", "Gates", "General", "Generator", "Generators", "Get", "Giga", "Give", "Global", "Go", "Goes", "Going", "Gone", "Good", "Got", "Gram", "Grams", "Granted", "Grave", "Great", "Greater", "Green", "Grenade", "Ground", "Group", "Guard", "Gun", "H", "Hack", "Half", "Hallway", "Hand", "Hardware", "Has", "HasEntered", "Have", "Hazard", "He", 
+"Head", "Hear", "Heavy", "Hecto", "Helicopter", "Hello", "Help", "Her", "Here", "High", "His", "Hit", "Hour", "How", "Human", "Hundred", "I", "Identification", "Identify", "If", "Immediate", "Immediately", "Important", "In", "Include", "Inclusion", "Incorrect", "Increase", "Indentified", "Infection", "Information", "Initializing", "Initiated", "InProgress", "Inside", "Installation", "Installed", "Installing", "Insurgency", "Insurgent", "Intercom", "Interest", "Internal", "Intersection", "Into", "Intruder", "Iota", "Is", "It", "J", "January", "Job", "Join", "July", "Jump", "June", "Just", "K", "Kappa", "Keep", "Kelvin", "Keter", "Key", "Kill", "Killer", "Kilo", "King", "Kit", "Know", "L", "Laboratory", "Lambda", "Last", "Leak", "Leave", "Left", "Less", "Lethal", "Letter", "Level", "Lieutenant", "Life", "Light", "Lights", "Like", "Liquefied", "Liquid", "Live", "Load", "Local", "Locate", "Location", "Lock", "Lockdown", "Look", "Lost", "Low", "M", "Magnetic", "Main", "Major", "Make", "Malfunction", "Man", "Manager", "Manual", "Many", "March", "Material", "May", "Me", "Med", "Medical", "Medium", "Mega", "MegaPatch2_01", "Memory", "Men", "Message", "Meter", "Meters", "Micro", "Mili", "Military", "Milliard", "Million", "Minor", "Minus", "Minute", "Minutes", "Mobile", "Mode", "Module", "Monday", "Month", "More", "Morphine", "Most", "Move", "MtfUnit", "Mu", "Much", "Must", "My", "N", "Name", "Nano", "Nato_A", "Nato_B", "Nato_C", "Nato_D", "Nato_E", "Nato_F", "Nato_G", "Nato_H", "Nato_I", "Nato_J", "Nato_K", "Nato_L", "Nato_M", "Nato_N", "Nato_O", "Nato_P", "Nato_Q", "Nato_R", "Nato_S", "Nato_T", "Nato_U", "Nato_V", "Nato_W", "Nato_X", "Nato_Y", "Nato_Z", "Near", "Nearby", "Nearest", "Necessary", "Neck", "Need", "Negative", "Neutralize", "Never", "New", "Next", "Nice", "NineTailedFox", "No", "Nominal", "Nor", "Normal", "Normalize", "North", "NorthWood", "NoSCPsLeft", "Not", "Notice", "November", "Now", "Nu", "Nuclear", "Number", "O", "O5", "October", "Of", "Off", "Offline", "Often", "Old", "Omega", "Omicron", "On", "Once", "Ongoing", "Online", "Only", "Open", "Operate", "Operation", "Operational", "Operative", "Optimal", "Optional", "Or", "Orange", "Order", "Organism", "Other", "Out", "Outage", "OutOf", "Outside", "Over", "Overall", "Overcharge", "Overheat", "Override", "P", "Pain", "Panic", "Partners", "Password", "Patch", "Patreon", "Pause", "Paused", "Pay", "People", "Percent", "Permanent", "Person", "Personnel", "Petroleum", "Phi", "Pi", "Pistol", "Plague", "Please", "Plus", "Pocket", "Positive", "Possible", "Post-", "Potential", "Power", "Pre-", "Previous", "Primary", "Priority", "Private", "Pro-", "Probability", "Procedure", "Proceed", "Process", "Progress", "Project", "Project2", "Prosecution", "Protect", "Protection", "Protocol", "Psi", "Public", "Purge", "Put", "Q", "Query", "Question", "Questioning", "R", "Radiation", "Radio", "Rank", "Reactivating", "Reactivation", "Reactor", "Ready", "Real", "Really", "Recieve", "Recontained", "Recontainment", "Red", "Redacted", "Rejected", "Remaining", "Remind", "Repair", "Repairing", "Repeat", "Report", "Require", "Respawn", "Respect", "Restricted", "Result", "Resumed", "Resurrection", "Retreat", "Return", "Revoke", "Rifle", "Right", "Ro", "Room", "Rough", "Run", "Running", "S", "Safe", "Saturday", "Saw", "Say", "Scan", "Scanning", "Science", "Scientist", "Scientists", "Scp", "ScpSubject", "ScpSubjects", "Seal", "Search", "Second", "Secondary", "Seconds", "Secret", "Sector", "Secure", "Security", "See", "Self", "Send", "Senior", "Sentient", "September", "Sequence", "Serious", "Seriously", "Serpents", "Service", "She", "Shelter", "Shoot", "Shooting", "Shot", "Should", "Shut", "Shutting", "Side", "Sigma", "Site", "Small", "Snap", "So", "Software", "Solid", "Some", "Somebody", "Someone", "Something", "Sorry", "Source", "South", "Space", "Spotted", "Squad", "Stabilize", "Stable", "Stand", "Standard", "Standby", "Start", "Started", "Starting", "Static", 
+"Status", "Stay", "Step", "Stop", "Stopped", "Storage", "Straight", "Strictly", "Studio", "Substantial", "Subsytem", "Subsystem", "Successfully", "Sunday", "Supply", "Support", "Supporter", "Surface", "Surge", "Surprise", "Surrender", "Survive", "Survivor", "System", "Systems", "T", "Tactical", "Take", "Taken", "Tank", "Target", "Task", "Tau", "Team", "Tell", "Temperature", "Temporal", "Tera", "Terminal", "Terminate", "Terminated", "Termination", "Tesla", "Test", "Thank", "Thanks", "That", "The", "Their", "Them", "Then", "There", "Thermal", "Theta", "They", "The_Consonant", "Thing", "Think", "Third", "This", "Though", "Thought", "Thousand", "Threat", "Through", "Thursday", "Time", "Times", "Tminus", "To", "Today", "Tomorrow", "Too", "Top", "Touch", "Towards", "Trillion", "True", "Tuesday", "Turn", "Turned", "Turns", "Twice", "U", "Un-", "Unable", "Unauthorized", "Unavailable", "UncalculatedSCPsLeft", "Under", "Unit", "Universal", "Unknown", "Unnecessary", "Unspecified", "Unstable", "Until", "Up", "Upsilon", "Us", "USBDrive", "Use", "User", "Using", "V", "Very", "Virus", "W", "Wait", "Wall", "Want", "Warhead", "Warning", "Was", "Way", "Weapon", "Weapons", "Wednesday", "Week", "Welcome", "Well", "Went", "Were", "West", "What", "When", "Where", "Which", "White", "Who", "Why", "Wide", "Will", "With", "Without", "Wood", "Word", "Work", "World", "Worst", "Would", "Wrong", "X", "Xi", "Xmas_BouncyBalls", "Xmas_Epsilon11", "Xmas_HasEntered", "Xmas_JingleBells", "Xmas_ScpDubjects", "Y", "Year", "Yellow", "Yes", "Yesterday", "Yet", "You", "Your", "Z", "Zeta", "Zone"
+];
+
+const wordsToAlwaysShow = ["-Ish", "-Like", ".", ".G1", ".G2", ".G3", ".G4", ".G5", ".G6", ".G7", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "30", "40", "50", "60", "70", "80", "90"];
+const wordsToExcludeFromList = ["yield_*", "yield_*.*", "pitch_*", "pitch_*.*", "jam_*_*"];
+
+const wordsWithExplanations = {
+  "Xmas_JingleBells": "Произносит фразу: Jingle bells, jingle bells, jingle all the way. Oh what fun it is to ride in a one-horse open sleigh.",
+  "Xmas_ScpSubjects": "Произносит фразу: Spoilsport holiday haters",
+  "Xmas_HasEntered": "Произносит фразу: ...has entered the workshop. All remaining elves are advised to seek shelter in the nearest gingerbread house, until the unit has festivized the facility. Awaiting recontainment of...",
+  "Xmas_Epsilon11": "Произносит фразу: Tactical holiday unit, epsilon 11, designated...",
+  "Xmas_BouncyBalls": "Произносит фразу: Bouncy balls, bouncy balls, bouncing all away. Oh what fun it is to die so hold your head and pray.",
+  "UncalculatedSCPsLeft": "Произносит фразу: Awaiting recontainment of... an uncalculated number of SCPs.",
+  "NoSCPsLeft": "Произносит фразу: Substantial threat to safety remains within the facility, exercise caution.",
+  "MtfUnit": "Произносит фразу: Mobile Task Force Unit",
+  "MegaPatch2_01": "Произносит фразу: Dimension... Dimension",
+  "HasEntered": "Произносит фразу: ...has entered the facility.",
+  "Bell_Start": "Звук начала оповещения",
+  "Bell_End": "Звук конца оповещения",
+  "AwaitingRecontainment": "Произносит фразу: Awaiting recontainment of...",
+  "AllSecured": "Произносит фразу: All SCP subjects have been secured.",
+  "AllRemaining": "Произносит фразу: All remaining personnel are advised to proceed with standard evacuation protocols, until an MTF squad reaches your destination.",
+  "AllGeneratorsEngaged": "Произносит фразу: All generators have been successfully engaged.",
+  "CassieSystem ": "Произносит фразу: Central Autonomic Service System for Internal Emergencies",
+  ".G7": "Один из разработчиков визжит, как свинья",
+  ".G6": "Звук объявления SCP-079 в SCP:CB",
+  ".G5": "Короткий, негромкий писк",
+  ".G4": "Мгновенный, пронзительный электрический писк",
+  ".G3": "Стандартный звук объявления",
+  ".G2": "Низкий звуковой сигнал",
+  ".G1": "Высокий звуковой сигнал",
+  ".": "Создаёт длительную паузу между словами в оповещении"
+};
+
+let currentLetter = '*';
+
+function checkWords() {
+  const inputText = document.getElementById("inputWords").value;
+  const inputWords = inputText.toLowerCase().split(/\s+/); 
+  const resultContent = document.getElementById("result-content");
+  resultContent.innerHTML = "";
+  let markedText = "";
+
+  for (const inputWord of inputWords) {
+    let found = false;
+    for (const word of wordsToCheck) {
+      const regex = new RegExp("^" + word.toLowerCase().replace(/\*/g, ".*") + "$"); 
+      if (regex.test(inputWord)) {
+        found = true;
+        break;
+      }
+    }
+    const wordClass = found ? "" : "marked-word";
+    markedText += `<span class="${wordClass}">${inputWord}</span> `;
+  }
+
+  resultContent.innerHTML = markedText;
+  changeFontSize();
+}
+
+function changeFontSize() {
+    const fontSize = parseInt(document.getElementById("fontSizeInput").value, 10);
+    document.getElementById("inputWords").style.fontSize = fontSize + "px";
+    document.getElementById("result-content").style.fontSize = fontSize + "px";
+	document.querySelectorAll("#wordList > div").forEach(div => {
+		div.style.fontSize = fontSize + "px";
+	});
+}
+function insertWord(word) {
+  const textarea = document.getElementById("inputWords");
+  textarea.value += " " + word;
+  textarea.focus();
+  checkWords();
+}
+
+function createWordList() {
+  const wordList = document.getElementById("wordList");
+  wordList.innerHTML = '';
+
+  const wordsToDisplay = [];
+
+  if (currentLetter === '!') {
+    // Show ONLY words with explanations
+    for (const word in wordsWithExplanations) {
+      wordsToDisplay.push(word);
+    }
+  } else if (currentLetter === '*') {
+    // Show ONLY wordsToAlwaysShow
+    wordsToDisplay.push(...wordsToAlwaysShow);
+  } else {
+    // Show words starting with currentLetter, EXCLUDING words with explanations and wordsToAlwaysShow
+    wordsToDisplay.push(...wordsToCheck.filter(word =>
+      !wordsToExcludeFromList.includes(word) &&
+      word.toLowerCase().startsWith(currentLetter) &&
+      !(word in wordsWithExplanations) &&
+      !wordsToAlwaysShow.includes(word)
+    ));
+  }
+  const displayLetter = currentLetter;
+  document.getElementById("currentLetter").textContent = displayLetter;
+
+  wordsToDisplay.forEach(word => {
+    const wordBox = document.createElement("div");
+    const explanation = wordsWithExplanations[word] || ""; 
+
+    if (explanation) {
+      wordBox.classList.add("tooltip", "explained-word"); 
+      wordBox.innerHTML = `${word}<span class="tooltiptext">${explanation}</span><img src="https://i.imgur.com/HoZ1EVX.png" alt="Explanation available">`;
+    } else {
+      wordBox.innerHTML = word;
+    }
+    wordBox.addEventListener("click", () => insertWord(word));
+    wordList.appendChild(wordBox);
+  });
+}
+
+function nextLetter() {
+  const alphabet = "*abcdefghijklmnopqrstuvwxyz!";
+    let nextIndex = alphabet.indexOf(currentLetter) +1;
+    if(nextIndex >= alphabet.length) nextIndex = 0;
+    currentLetter = alphabet[nextIndex];
+  createWordList();
+}
+
+function prevLetter() {
+  const alphabet = "*abcdefghijklmnopqrstuvwxyz!";
+    let prevIndex = alphabet.indexOf(currentLetter) -1;
+    if(prevIndex < 0) prevIndex = alphabet.length -1;
+    currentLetter = alphabet[prevIndex];
+  createWordList();
+}
+
+function createAlphabetList() {
+  const alphabetList = document.getElementById("alphabetList");
+  const alphabet = "*abcdefghijklmnopqrstuvwxyz!";
+  alphabetList.innerHTML = '';
+  alphabet.split('').forEach(letter => {
+    const letterDiv = document.createElement("div");
+    letterDiv.textContent = letter.toUpperCase();
+    letterDiv.addEventListener("click", () => {
+        currentLetter = letter;
+        createWordList();
+        alphabetList.style.display = "none";
+    });
+    alphabetList.appendChild(letterDiv);
+  });
+}
+
+function toggleAlphabetList() {
+  const alphabetList = document.getElementById("alphabetList");
+  alphabetList.style.display = alphabetList.style.display === "none" ? "block" : "none";
+}
+  function showAlphabetList(event) {
+    const alphabetList = document.getElementById("alphabetList");
+    const currentLetterRect = document.getElementById('currentLetter').getBoundingClientRect();
+
+    // Calculate position relative to the currentLetter, considering scrolling
+    const left = currentLetterRect.left + currentLetterRect.width / 2 - alphabetList.offsetWidth / 2 + window.scrollX;
+    const top = currentLetterRect.bottom + window.scrollY;
+
+    alphabetList.style.left = left + 'px';
+    alphabetList.style.top = top + 'px';
+    alphabetList.style.display = "grid";
+    alphabetListOpen = true;
+    document.addEventListener('click', handleClickOutside);
+  }
+
+  function handleClickOutside(event) {
+    const alphabetList = document.getElementById("alphabetList");
+    if (alphabetListOpen && !alphabetList.contains(event.target) && !event.target.closest('#currentLetter')) {
+      alphabetList.style.display = "none";
+      alphabetListOpen = false;
+      document.removeEventListener('click', handleClickOutside);
+    }
+  }
+
+
+
+
+window.addEventListener('load', function () {
+    OverlayScrollbars(document.getElementById('myElement'), {
+        //Here you can configure your scrollbar styles
+    });
+});
+
+window.addEventListener('load', function () {
+    OverlayScrollbars(document.getElementById('myElement'), {
+        theme: {
+            autoHide: 'scroll',
+            autoHideSpeed: 3000, // Увеличено до 3000 мс
+            size: '8px',
+             background: {
+                 main: '#f1f1f1',
+                 groove: '#eee'
+             },
+             scrollbar: {
+                 main: '#aaa',
+                 corner: '#ddd'
+             },
+             track: {
+                 main: '#fff',
+                 background: '#fff'
+             }
+         }
+     });
+ });
+
+
+
+
+document.getElementById('currentLetter').addEventListener('click', (event) => {
+    showAlphabetList(event);
+});
+
+document.getElementById('currentLetter').addEventListener('click', () => {
+    const alphabetList = document.getElementById("alphabetList");
+    const rect = document.getElementById('currentLetter').getBoundingClientRect();
+    alphabetList.style.left = (rect.left + window.scrollX) + 'px'; 
+    alphabetList.style.top = (rect.bottom + window.scrollY) + 'px';
+    alphabetList.style.display = alphabetList.style.display === "none" ? "block" : "none";
+});
+document.getElementById('currentLetter').addEventListener('click', showAlphabetList); //Simplified event listener
+document.getElementById('inputWords').addEventListener('input', checkWords);
+document.getElementById('fontSizeInput').addEventListener('input', changeFontSize);
+document.getElementById('nextLetter').addEventListener('click', nextLetter);
+document.getElementById('prevLetter').addEventListener('click', prevLetter);
+createWordList();
+createAlphabetList();
+document.querySelector('a[href^="#"]').addEventListener('click', function(e) {
+  e.preventDefault();
+
+  const targetId = this.getAttribute('href');
+  const targetElement = document.querySelector(targetId);
+
+  if (targetElement) {
+    targetElement.scrollIntoView({
+      behavior: 'smooth' // Важно: 'smooth' для плавной прокрутки
+    });
+  }
+});
+</script>
+</div>
+</body>
+</html>

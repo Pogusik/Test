@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep-Sea Area-29</title>
+    <style>
+        :root {
+            --deep-blue: #05080c;
+            --dark-blue: #062135;
+            --primary: #6285b7;
+            --secondary: #62a8b7;
+            --accent: #6262b7;
+            --text: #d0dbea;
+            --highlight: #7d9bc8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Пузырьковый фон */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(98, 168, 183, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 8s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 5s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 11s;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 15px;
+            height: 15px;
+            left: 55%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 30px;
+            height: 30px;
+            left: 65%;
+            animation-duration: 8s;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 60px;
+            height: 60px;
+            left: 80%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+
+        /* Основная структура */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--deep-blue) 100%);
+            padding: 30px 0;
+            border-bottom: 1px solid var(--primary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1, h2, h3 {
+            color: var(--highlight);
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(98, 133, 183, 0.5);
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: var(--secondary);
+        }
+
+        /* Карточки разделов */
+        .section-card {
+            background: rgba(5, 8, 12, 0.7);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(98, 133, 183, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(98, 133, 183, 0.3);
+        }
+
+        /* Навигация */
+        nav {
+            background-color: rgba(6, 33, 53, 0.9);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0 15px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--highlight);
+            background-color: rgba(98, 133, 183, 0.2);
+        }
+
+        /* Списки */
+        ul.feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul.feature-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+        }
+
+        ul.feature-list li:before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        /* Таблицы */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        th {
+            background-color: rgba(98, 133, 183, 0.1);
+            color: var(--highlight);
+        }
+
+        tr:hover {
+            background-color: rgba(98, 133, 183, 0.05);
+        }
+
+        /* Подсветка важного */
+        .highlight {
+            color: var(--highlight);
+            font-weight: bold;
+        }
+
+        /* Футер */
+        footer {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%);
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 50px;
+            border-top: 1px solid var(--primary);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav li {
+                margin: 5px 0;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>Глубоководный Участок-29</h1>
+            <p style="text-align: center; font-style: italic; color: var(--secondary);">Кодовое название: "Треугольник Бездны"</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#location">Местоположение</a></li>
+            <li><a href="#structure">Конструкция</a></li>
+            <li><a href="#scp">SCP объекты</a></li>
+            <li><a href="#roles">Роли и задачи</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="location" class="section-card">
+            <h2>Местоположение</h2>
+            <p>Участок-29 расположен в <span class="highlight">желобе Тонга</span> (глубина ~10 800 м), в зоне аномально высокой геотермальной активности. Замаскирован под "экспериментальную станцию по изучению гидротермальных источников" под управлением фиктивной корпорации <span class="highlight">"Oceanus Research"</span>.</p>
+        </section>
+
+        <section id="structure" class="section-card">
+            <h2>Конструкция и назначение</h2>
+            
+            <h3>Архитектура:</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Треугольная форма</span> (каждая сторона — 450 м), состоящая из трёх основных модулей:
+                    <ul class="feature-list">
+                        <li><span class="highlight">"Вершина"</span> (командный центр и жилые отсеки)</li>
+                        <li><span class="highlight">"Основание-Альфа"</span> (лаборатории и карантинные зоны)</li>
+                        <li><span class="highlight">"Основание-Бета"</span> (хранилище аномалий и энергетический реактор)</li>
+                    </ul>
+                </li>
+                <li>Конструкция усилена <span class="highlight">сплавом S-499 "Нептун"</span>, устойчивым к давлению, коррозии и аномальным энергетическим воздействиям</li>
+            </ul>
+
+            <h3>Специализация:</h3>
+            <ul class="feature-list">
+                <li>Исследование <span class="highlight">"Тихоокеанского аномального треугольника"</span> — зоны, где зафиксированы:
+                    <ul class="feature-list">
+                        <li>Самопроизвольные изменения глубины (феномен <span class="highlight">"Призрачного мелководья"</span>)</li>
+                        <li>Появление неидентифицированных подводных структур (объекты класса <span class="highlight">"Кракен-Х"</span>)</li>
+                        <li>Содержание аномалий, связанных с <span class="highlight">глубоководной средой</span> и <span class="highlight">искажением пространства</span></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Персонал:</h3>
+            <ul class="feature-list">
+                <li>Штат включает <span class="highlight">гидроокеанологов</span>, <span class="highlight">физиков-аномалов</span> и <span class="highlight">спецподразделение "Тритон"</span> (водолазов с экзокостюмами серии <span class="highlight">DSV-7</span>)</li>
+                <li>Для минимизации утечек информации связь с поверхностью ограничена <span class="highlight">квантово-зашифрованными гидроакустическими каналами</span></li>
+            </ul>
+
+            <h3>МорОГ (Морская Оперативная Группа) Дельта-12:</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Название:</span> "Плач Сирен"</li>
+                <li><span class="highlight">Задачи:</span>
+                    <ul class="feature-list">
+                        <li>Контроль за периметром Участка-29</li>
+                        <li>Ликвидация SCP-####-2 (глубоководных существ, проникающих в зону) и поддержание внутренней безопасности</li>
+                        <li>Сбор образцов аномальной флоры/фауны</li>
+                    </ul>
+                </li>
+                <li><span class="highlight">Экипировка:</span> [Данные засекречены] (используют гарпуны с зарядами, подавляющими аномальные свойства)</li>
+            </ul>
+        </section>
+
+        <section id="scp" class="section-card">
+            <h2>SCP на временном содержании</h2>
+            
+            <div class="scp-item">
+                <h3>SCP-X-1 "Глубинный Проповедник"</h3>
+                <ul class="feature-list">
+                    <li><span class="highlight">Класс:</span> Ожидает рассмотрения</li>
+                    <li><span class="highlight">Описание:</span>
+                        <ul class="feature-list">
+                            <li>Разумное человекоподобное существо (2,5 м в высоту) с кожей, покрытой биолюминесцентными узорами</li>
+                            <li>Издает низкочастотные звуки, вызывающие у людей <span class="highlight">непреодолимое желание войти в воду</span></li>
+                            <li>При прямом контакте <span class="highlight">переписывает память жертвы</span>, убеждая её, что она "всегда принадлежала океану"</li>
+                        </ul>
+                    </li>
+                    <li><span class="highlight">Механика в SCP:SL:</span>
+                        <ul class="feature-list">
+                            <li>Может <span class="highlight">зомбировать</span> игроков (аналогично SCP-049, но через неслышимый звук)</li>
+                            <li>Превращает убитых в <span class="highlight">"Глубинных Проповедников"</span> (мобы с низким HP, внешне идентичные оригиналу, но со <span class="highlight">светящимися голубыми глазами</span>)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="scp-item">
+                <h3>SCP-X-2 "Куб Абсолютного Нуля"</h3>
+                <ul class="feature-list">
+                    <li><span class="highlight">Класс:</span> Ожидает рассмотрения</li>
+                    <li><span class="highlight">Описание:</span>
+                        <ul class="feature-list">
+                            <li>Металлический куб (1×1×1 м) с <span class="highlight">неизвестными символами</span> на гранях</li>
+                            <li>При активации (случайной или при касании) создает <span class="highlight">зону абсолютного нуля</span> (радиус 5 м)</li>
+                            <li>Эффекты:
+                                <ul class="feature-list">
+                                    <li>Все объекты (включая людей) <span class="highlight">мгновенно замерзают</span>, достигая максимальной плотности</li>
+                                    <li>Через 30 секунд зона схлопывается без последствий, но жертвы остаются <span class="highlight">"живыми скульптурами"</span></li>
+                                    <li>Обратный эффект активируется ударом по кубу</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><span class="highlight">Механика в SCP:SL:</span>
+                        <ul class="feature-list">
+                            <li>Имеет HP-модуль. Для активации необходимо взаимодействие с символом</li>
+                            <li>Замедляет игроков в зоне действия на <span class="highlight">100%</span></li>
+                            <li>Урон по кубу снимает эффекты</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="scp-item">
+                <h3>SCP-X-3 "Морской Левиафан"</h3>
+                <ul class="feature-list">
+                    <li><span class="highlight">Класс:</span> Ожидает рассмотрения</li>
+                    <li><span class="highlight">Описание:</span>
+                        <ul class="feature-list">
+                            <li>Гигантское змееподобное существо (длина >2000 км, радиус тела — 60 м), напоминающее глубоководного угря</li>
+                            <li>Находится в состоянии анабиоза. При нарушении <span class="highlight">протокола усыпления</span> атакует базу:
+                                <ul class="feature-list">
+                                    <li>Разрушает конструкцию Участка-29 щупальцами</li>
+                                    <li>Вызывает катастрофические <span class="highlight">перепады давления</span>, убивающие персонал</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><span class="highlight">Механика в SCP:SL:</span>
+                        <ul class="feature-list">
+                            <li>Если игроки не выполнят обязательные действия, запускается <span class="highlight">ивент "Пробуждение"</span>:
+                                <ul class="feature-list">
+                                    <li>Одна из стен базы разрушается, появляется часть тела Левиафана</li>
+                                    <li>Персонал погибает от <span class="highlight">разгерметизации</span> (механика "удушья")</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="roles" class="section-card">
+            <h2>Задачи и роли</h2>
+            
+            <h3>МорОГ "Плач Сирен":</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Иерархия:</span>
+                    <ol>
+                        <li><span class="highlight">Глава службы безопасности (ГСБ)</span> — координация обороны</li>
+                        <li><span class="highlight">Лейтенант</span> — управление группой</li>
+                        <li><span class="highlight">Сержанты (x3)</span> — выполнение приказов</li>
+                        <li><span class="highlight">Рядовые (x10+)</span> — патрулирование, ликвидация угроз</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h3>Научный отдел:</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Роли:</span>
+                    <ul class="feature-list">
+                        <li><span class="highlight">Руководитель группы (x2)</span> — контроль исследований</li>
+                        <li><span class="highlight">Старший научный сотрудник (x1)</span> — анализ данных</li>
+                        <li><span class="highlight">Научные сотрудники (x3)</span> — эксперименты</li>
+                        <li><span class="highlight">Младший научный сотрудник (x1)</span> — помощник</li>
+                    </ul>
+                </li>
+                <li><span class="highlight">Особенность:</span> Изначально не знают свойств аномалий — должны изучать их в процессе</li>
+            </ul>
+
+            <h3>Отдел логистики:</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Логисты (x2)</span> — закупка оборудования через <span class="highlight">мини-игру</span> (например, аукцион или торговую систему)</li>
+            </ul>
+
+            <h3>Прочие роли:</h3>
+            <ul class="feature-list">
+                <li><span class="highlight">Д-класс (x4+)</span> — выживание, выполнение приказов</li>
+                <li><span class="highlight">Инженеры:</span>
+                    <ul class="feature-list">
+                        <li><span class="highlight">Механик (x1)</span> — ремонт систем</li>
+                        <li><span class="highlight">Программист (x1)</span> — настройка оборудования</li>
+                    </ul>
+                </li>
+                <li><span class="highlight">Повара (x2)</span> — система готовки с <span class="highlight">рецептами и эффектами</span> (например, еда временно повышает характеристики)</li>
+            </ul>
+
+            <p><span class="highlight">Примечание:</span> Дирекция и высшее руководство отсутствуют — база работает <span class="highlight">автономно</span>. ИТС (инженерно-технический персонал) — второстепенная роль, мало активных действий.</p>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Deep-Sea Area-29 | "Треугольник Бездны" | Классифицировано</p>
+            <p style="font-size: 0.8em; color: var(--secondary);">© Фонд SCP | Все права защищены</p>
+        </div>
+    </footer>
+</body>
+</html>

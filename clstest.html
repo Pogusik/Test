@@ -1049,6 +1049,31 @@
                     - Мелкие исправления интерфейса</li>
             </ul>
         </div>
+        <div class="update-log-header" style=" background: linear-gradient(135deg, #EE7600, #ee4300);
+border-radius: 0px 0px 0 0; ">
+    <h3><i class="fas fa-fire-alt"></i> Hot Fix v1.1.1</h3>
+</div>
+<div class="update-log-body">
+    <ul class="update-list">
+        <li><i class="fas fa-cogs" style="color: #EE7600;
+"></i> <strong>Улучшения</strong><br>
+            - Добавлен счётчик предметов в каждой категории</li>
+        
+        <li><i class="fas fa-bug" style="color: #EE7600;
+"></i> <strong>Исправления ошибок</strong><br>
+            - Исправлена ошибка, которая могла ломать списки категорий<br>
+            - Исправлено отображение кастомных предметов (LightRP теперь корректно отображается)<br>
+            - Мелкие исправления интерфейса<br>
+            - Капибара больше не жирная             <img src="assets/items/capybara956.png" style="
+                display: inline-block;
+                margin-left: 2px;
+                width: 30px;
+                height: 30px;
+                animation: spin 0.6s linear infinite;
+                vertical-align: middle;
+            "></li>
+    </ul>
+</div>
         <div class="update-log-footer">
             <button class="btn btn-primary" id="closeUpdateLog">Отлично!</button>
         </div>
@@ -1355,11 +1380,15 @@
     margin-right: 5px;
     vertical-align: middle;
 }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const currentVersion = '1.1'; // Обновлять при каждом новом релизе
+        const currentVersion = '1.1.1'; // Обновлять при каждом новом релизе
         const lastSeenVersion = localStorage.getItem('lastSeenVersion');
         const updateModal = document.getElementById('updateLogModal');
         initRoleModal();
@@ -1744,9 +1773,9 @@
                 <img src="assets/yellow.png" class="server-icon">
                 <span>AutoEvents</span>
             </div>
-            <div class="select-option" data-value="LRP" data-img="assets/blue.png">
+            <div class="select-option" data-value="LightRP" data-img="assets/blue.png">
                 <img src="assets/blue.png" class="server-icon">
-                <span>LRP</span>
+                <span>LightRP</span>
             </div>
             <div class="select-option" data-value="FullRP" data-img="assets/cyan.png">
                 <img src="assets/cyan.png" class="server-icon">
@@ -1770,7 +1799,7 @@
             <option value="MediumRP">MediumRP</option>
             <option value="Classic">Classic</option>
             <option value="AutoEvents">AutoEvents</option>
-            <option value="LRP">LRP</option>
+            <option value="LightRP">LightRP</option>
             <option value="FullRP">FullRP</option>
             <option value="HardRP">HardRP</option>
             <option value="FunRP">FunRP</option>
@@ -2026,29 +2055,65 @@
         }
 
         function selectItem(item) {
-        inventory[currentSlot] = {
-            name: item.name,
-            id: item.id,
-            img: item.img || ''
-        };
-        
-        const slotElement = document.getElementById(`slot${currentSlot}`);
-        if (item.img) {
-            slotElement.innerHTML = `
-                <div class="slot-content">
-                    <img src="${item.img}" class="slot-img" onerror="this.style.display='none'">
-                    <div>${item.name}</div>
-                </div>
-            `;
-        } else {
-            slotElement.innerHTML = `
-                <div class="slot-content">${item.name}</div>
-            `;
-        }
-        
-        generateCLscript();
-    }
+    inventory[currentSlot] = {
+        name: item.name,
+        id: item.id,
+        img: item.img || ''
+    };
+    
+    const slotElement = document.getElementById(`slot${currentSlot}`);
+    const imgHtml = item.img ? 
+        `<img src="${item.img}" class="slot-img" loading="lazy" onerror="this.style.display='none'">` : 
+        '';
+    
+    slotElement.innerHTML = `
+        <div class="slot-content">
+            ${imgHtml}
+            <div>${item.name}</div>
+        </div>
+    `;
+    
+    generateCLscript();
+}
+let allCategories = new Set();
+let serverItemsCache = {};
 
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    // Сначала собираем ВСЕ возможные категории
+    collectAllCategories();
+    // Затем инициализируем интерфейс
+    initInventory();
+});
+
+// Собираем все категории из всех предметов
+function collectAllCategories() {
+    allItems.forEach(item => {
+        if (item.category) allCategories.add(item.category);
+    });
+}
+function updateCategoriesCount() {
+    const server = document.getElementById('serverSelect').value;
+    
+    // Кэшируем предметы для сервера
+    if (!serverItemsCache[server]) {
+        serverItemsCache[server] = allItems.filter(item => 
+            item.server === 'all' || item.server === server
+        );
+    }
+    
+    const serverItems = serverItemsCache[server];
+    
+    // Обновляем кнопки категорий
+    document.querySelectorAll('.category-btn:not(.all-btn)').forEach(btn => {
+        const category = btn.dataset.category;
+        const count = serverItems.filter(item => item.category === category).length;
+        btn.innerHTML = `<i class="${getCategoryIcon(category)}"></i> ${category} (${count})`;
+        
+        // Делаем кнопку неактивной если нет предметов
+        btn.classList.toggle('disabled', count === 0);
+    });
+}
         function updateSlotDisplay(slot) {
             const slotElement = document.getElementById(`slot${slot}`);
             const item = inventory[slot];
@@ -2074,89 +2139,104 @@
         }
 
         function initInventory() {
-            // Initialize slots
-            for (let i = 1; i <= 8; i++) {
-                updateSlotDisplay(i);
-            }
-            
-            // Select first slot by default
-            selectSlot(1);
-            
-            // Initialize categories
-            initCategories();
-            
-            // Load items
-            filterItems();
-        }
+    // Инициализация слотов
+    for (let i = 1; i <= 8; i++) {
+        updateSlotDisplay(i);
+    }
+    
+    // Выбираем первый слот по умолчанию
+    selectSlot(1);
+    
+    // Инициализация категорий
+    initCategories();
+    
+    // Загрузка предметов
+    filterItems();
+    
+    // Обработчик изменения сервера
+    document.getElementById('serverSelect').addEventListener('change', function() {
+        updateCategoriesCount();
+        filterItems();
+        clearUnavailableItems();
+    });
+}
 
         function initCategories() {
-            const categoriesContainer = document.getElementById('inventoryCategories');
-            categoriesContainer.innerHTML = '';
-            
-            // Get unique categories for current server
-            const server = document.getElementById('serverSelect').value;
-            const categories = [...new Set(allItems
-                .filter(item => item.server === 'all' || item.server === server)
-                .map(item => item.category)
-                .filter(cat => cat)
-            )];
-            
-            // Add "All" button
-            const allBtn = document.createElement('button');
-            allBtn.className = 'category-btn active';
-            allBtn.innerHTML = '<i class="fas fa-list"></i> Все';
-            allBtn.onclick = () => {
-                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                allBtn.classList.add('active');
-                currentCategory = '';
-                currentSubcategory = '';
-                filterItems();
-                
-                // Remove all subcategory buttons
-                document.querySelectorAll('.subcategory-group').forEach(group => group.remove());
-            };
-            
-            // Create category group
-            const categoryGroup = document.createElement('div');
-            categoryGroup.className = 'category-group';
-            categoryGroup.appendChild(allBtn);
-            
-            // Add category buttons
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn';
-                btn.innerHTML = `<i class="fas fa-${getCategoryIcon(category)}"></i> ${category}`;
-                btn.onclick = () => {
-                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentCategory = category;
-                    currentSubcategory = '';
-                    filterItems();
-                    showSubcategories(category);
-                };
-                categoryGroup.appendChild(btn);
-            });
-            
-            categoriesContainer.appendChild(categoryGroup);
-        }
+    const categoriesContainer = document.getElementById('inventoryCategories');
+    categoriesContainer.innerHTML = '';
+    
+    // Создаем группу категорий
+    const categoryGroup = document.createElement('div');
+    categoryGroup.className = 'category-group';
+    
+    // Кнопка "Все"
+    const allBtn = document.createElement('button');
+    allBtn.className = 'category-btn all-btn active';
+    allBtn.innerHTML = '<i class="fas fa-list"></i> Все';
+    allBtn.onclick = () => {
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        allBtn.classList.add('active');
+        currentCategory = '';
+        currentSubcategory = '';
+        filterItems();
+        document.querySelectorAll('.subcategory-group').forEach(group => group.remove());
+    };
+    categoryGroup.appendChild(allBtn);
+    
+    // Добавляем ВСЕ категории, даже если предметов нет
+    allCategories.forEach(category => {
+        const btn = document.createElement('button');
+        btn.className = 'category-btn';
+        btn.dataset.category = category;
+        btn.innerHTML = `<i class="fas fa-${getCategoryIcon(category)}"></i> ${category} (0)`;
+        btn.onclick = () => {
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategory = category;
+            currentSubcategory = '';
+            filterItems();
+            showSubcategories(category);
+        };
+        categoryGroup.appendChild(btn);
+    });
+    
+    categoriesContainer.appendChild(categoryGroup);
+    
+    // Первоначальное обновление счетчиков
+    updateCategoriesCount();
+}
+function createCategoryButton(text, icon, category) {
+    const btn = document.createElement('button');
+    btn.className = 'category-btn';
+    btn.innerHTML = `<i class="fas fa-${icon}"></i> ${text}`;
+    btn.onclick = () => {
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = category;
+        currentSubcategory = '';
+        filterItems();
+        showSubcategories(category);
+    };
+    return btn;
+}
 
         function getCategoryIcon(category) {
             const icons = {
-                'Оружие': 'gun',
-                'Медицина': 'medkit',
-                'Броня': 'shield-alt',
-                'Гранаты': 'bomb',
-                'Ключ-карты': 'key',
-                'Радио': 'walkie-talkie',
-                'Фонари': 'lightbulb',
-                'SCP-объекты': 'biohazard',
-                'Инструменты': 'tools',
-                'Еда': 'utensils',
-                'Сумки': 'bag-shopping',
-                'Электроника': 'microchip',
-                'Документы': 'file-alt',
-                'Спецсредства': 'handcuffs',
-                'Бытовые предметы': 'box-open'
+                'Оружие': 'fas fa-gun',
+                'Медицина': 'fas fa-medkit',
+                'Броня': 'fas fa-shield-alt',
+                'Гранаты': 'fas fa-bomb',
+                'Ключ-карты': 'fas fa-key',
+                'Радио': 'fas fa-comment-alt',
+                'Фонари': 'fas fa-lightbulb',
+                'SCP-объекты': 'fas fa-biohazard',
+                'Инструменты': 'fas fa-tools',
+                'Еда': 'fas fa-utensils',
+                'Сумки': 'fas fa-bag-shopping',
+                'Электроника': 'fas fa-microchip',
+                'Документы': 'fas fa-file-alt',
+                'Спецсредства': 'fas fa-lock',
+                'Бытовые предметы': 'fas fa-box-open'
             };
             
             return icons[category] || 'bullhorn';
@@ -2211,56 +2291,65 @@ function showSubcategories(category) {
         categoriesContainer.appendChild(subcategoryGroup);
     }
         function filterItems() {
-            const itemList = document.getElementById('itemList');
-            itemList.innerHTML = '';
+    const itemList = document.getElementById('itemList');
+    const server = document.getElementById('serverSelect').value;
+    const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
+    
+    // Используем кэш если есть
+    const serverItems = serverItemsCache[server] || 
+        allItems.filter(item => item.server === 'all' || item.server === server);
+    
+    // Фильтрация
+    const filteredItems = serverItems.filter(item => {
+        const categoryMatch = !currentCategory || item.category === currentCategory;
+        const subcategoryMatch = !currentSubcategory || item.subcategory === currentSubcategory;
+        const searchMatch = !searchQuery || 
+            item.name.toLowerCase().includes(searchQuery) || 
+            (item.id && item.id.toString().toLowerCase().includes(searchQuery));
+        
+        return categoryMatch && subcategoryMatch && searchMatch;
+    });
+    
+    // Очищаем список
+    itemList.innerHTML = '';
+    
+    // Быстрое добавление через DocumentFragment
+    const fragment = document.createDocumentFragment();
+    
+    if (filteredItems.length === 0) {
+        const noItems = document.createElement('div');
+        noItems.className = 'no-items';
+        noItems.textContent = 'Нет предметов';
+        fragment.appendChild(noItems);
+    } else {
+        filteredItems.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item';
             
-            const server = document.getElementById('serverSelect').value;
-            const searchQuery = document.getElementById('itemSearch').value.toLowerCase();
+            // Используем шаблонные строки
+            itemElement.innerHTML = `
+                ${item.img ? `<img src="${item.img}" class="item-img" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div class="item-name">${item.name}</div>
+                ${item.id ? `<div class="item-id">ID: ${item.id}</div>` : ''}
+            `;
             
-            // Filter items based on current filters
-            const filteredItems = allItems.filter(item => {
-                // Server filter
-                const serverMatch = server === 'All' ? true : item.server === 'all' || item.server === server;
-                
-                // Category filter
-                const categoryMatch = !currentCategory || item.category === currentCategory;
-                
-                // Subcategory filter
-                const subcategoryMatch = !currentSubcategory || item.subcategory === currentSubcategory;
-                
-                // Search filter
-                const searchMatch = !searchQuery || 
-                    item.name.toLowerCase().includes(searchQuery) || 
-                    item.id.toLowerCase().includes(searchQuery);
-                
-                return serverMatch && categoryMatch && subcategoryMatch && searchMatch;
-            });
-            
-            // Add items to the list
-            filteredItems.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'item';
-                
-                let itemContent = '';
-                if (item.img) {
-                    itemContent += `<img src="${item.img}" class="item-img" onerror="this.style.display='none'">`;
-                }
-                
-                itemContent += `
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-id">ID: ${item.id || 'Нет'}</div>
-                `;
-                
-                itemElement.innerHTML = itemContent;
-                itemElement.onclick = () => selectItem(item);
-                itemList.appendChild(itemElement);
-            });
-            
-            // Show message if no items found
-            if (filteredItems.length === 0) {
-                itemList.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--gray)">Нет предметов</div>';
-            }
-        }
+            itemElement.onclick = () => selectItem(item);
+            fragment.appendChild(itemElement);
+        });
+    }
+    
+    itemList.appendChild(fragment);
+}
+
+// Добавляем стиль для неактивных кнопок
+const style = document.createElement('style');
+style.textContent = `
+    .category-btn.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+`;
+document.head.appendChild(style);
 
         function clearItemSearch() {
             document.getElementById('itemSearch').value = '';

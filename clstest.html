@@ -2576,7 +2576,7 @@ function importGroupScript(groupId, scriptIndex) {
   const group = groups.find(g => g.id === groupId);
   const script = group.scripts[scriptIndex];
   
-  // Заполняем поля формы значениями из скрипта
+  // Убедитесь, что передаёте script.content, а не script
   importCLscriptFromString(script.content);
   
   showNotification('Скрипт успешно импортирован', 'success');
@@ -2675,14 +2675,14 @@ function copyGroupScript(groupId, scriptIndex) {
   const group = groups.find(g => g.id === groupId);
   const script = group.scripts[scriptIndex];
   
-  navigator.clipboard.writeText(script).then(() => {
+  navigator.clipboard.writeText(script.content).then(() => { // Копируем content вместо всего объекта
     showNotification('Скрипт скопирован', 'success');
   });
 }
 
 function copyAllGroupScripts() {
   const group = groups.find(g => g.id === currentGroupId);
-  const allScripts = group.scripts.join('\n\n');
+  const allScripts = group.scripts.map(script => script.content).join('\n\n'); // Сначала извлекаем content
   
   navigator.clipboard.writeText(allScripts).then(() => {
     showNotification('Все скрипты скопированы', 'success');

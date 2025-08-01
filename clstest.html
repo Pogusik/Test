@@ -1476,47 +1476,61 @@
 <body>
 
   <!-- Апдэйт лог -->
-  <div class="update-log-modal" id="updateLogModal">
-    <div class="update-log-content" id="updateLogContent">
-  <div class="update-log-header">
-    <h3><i class="fas fa-rocket"></i> Обновление v1.2</h3>
-    <button class="close-update-log">&times;</button>
+<div class="update-log-modal" id="updateLogModal">
+  <div class="update-log-content" id="updateLogContent">
+    <!-- Добавленный опросник -->
+    <div class="panel" style="background-color: var(--panel-bg); border: 2px dashed var(--primary); margin-bottom: 20px;">
+      <div class="panel-header" style="background-color: var(--primary); color: white;">
+        <i class="fas fa-poll"></i> Опросник
+      </div>
+      <div class="panel-body" style="text-align: center; padding: 15px;">
+        <p style="margin-bottom: 15px;">Помогите улучшить генератор! Пройдите короткий опрос:</p>
+        <a href="https://forms.gle/utrqD7csWebYj8o26" target="_blank" class="btn btn-primary" 
+           style="display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fas fa-external-link-alt"></i> Пройти опрос
+        </a>
+      </div>
+    </div>
+
+    <div class="update-log-header">
+      <h3><i class="fas fa-rocket"></i> Обновление v1.2</h3>
+      <button class="close-update-log">&times;</button>
+    </div>
+    <div class="update-log-body">
+      <ul class="update-list">
+        <li><i class="fas fa-layer-group"></i> <strong>Новая система Групп</strong>
+          <br>Теперь вы можете организовывать скрипты в группы для удобного хранения и управления. Доступно создание, редактирование, импорт/экспорт групп и управление скриптами внутри них.</li>
+
+        <li><i class="fas fa-image"></i> <strong>Новая система миниатюр</strong>
+          <br>Добавлен инструмент для создания визуальных превью персонажей с возможностью экспорта в PNG. Миниатюра включает изображение роли, описание, инвентарь и автоматически подстраивается под выбранный сервер.</li>
+
+        <li><i class="fas fa-scroll"></i> <strong>Апдэйт лог?</strong>
+          <br> Добавлена возможность посмотреть последний апдейт лог в любой удобный момент, находиться возле кнопки смены темы:
+          <div style="text-align: center; margin: 15px 0;">
+            <img src="assets/update1.2.png" alt="" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--input-border);">
+          </div>
+        </li>
+
+        <li><i class="fa-solid fa-border-top-left"></i> <strong>Новый стиль</strong>
+          <div style="text-align: center; margin: 15px 0;">
+            <img src="assets/pogusteam.png" alt="" style="max-width: 30%; border-radius: 8px; border: 1px solid var(--input-border);">
+          </div>
+        </li>
+
+        <li><i class="fas fa-bug"></i> <strong>Исправления ошибок</strong>
+          <br>- Оптимизирована работа генератора
+          <br>- Мелкие исправления интерфейса
+          <br>- Улучшена стабильность при работе с большими скриптами</li>
+      </ul>
+    </div>
+    <div class="update-log-footer">
+      <button class="btn btn-primary" id="closeUpdateLog">Отлично!</button>
+      <button class="btn btn-secondary" id="downloadUpdateLogImage">
+        <i class="fas fa-download"></i> Сохранить как изображение
+      </button>
+    </div>
   </div>
-  <div class="update-log-body">
-    <ul class="update-list">
-      <li><i class="fas fa-layer-group"></i> <strong>Новая система Групп</strong>
-        <br>Теперь вы можете организовывать скрипты в группы для удобного хранения и управления. Доступно создание, редактирование, импорт/экспорт групп и управление скриптами внутри них.</li>
-
-      <li><i class="fas fa-image"></i> <strong>Новая система миниатюр</strong>
-        <br>Добавлен инструмент для создания визуальных превью персонажей с возможностью экспорта в PNG. Миниатюра включает изображение роли, описание, инвентарь и автоматически подстраивается под выбранный сервер.</li>
-
-      <li><i class="fas fa-scroll"></i> <strong>Апдэйт лог?</strong>
-        <br> Добавлена возможность посмотреть последний апдейт лог в любой удобный момент, находиться возле кнопки смены темы:
-        <div style="text-align: center; margin: 15px 0;">
-          <img src="assets/update1.2.png" alt="" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--input-border);">
-        </div>
-      </li>
-
-            <li><i class="fa-solid fa-border-top-left"></i> <strong>Новый стиль</strong>
-        <div style="text-align: center; margin: 15px 0;">
-          <img src="assets/pogusteam.png" alt="" style="max-width: 30%; border-radius: 8px; border: 1px solid var(--input-border);">
-        </div>
-      </li>
-
-      <li><i class="fas fa-bug"></i> <strong>Исправления ошибок</strong>
-        <br>- Оптимизирована работа генератора
-        <br>- Мелкие исправления интерфейса
-        <br>- Улучшена стабильность при работе с большими скриптами</li>
-    </ul>
-  </div>
-<div class="update-log-footer">
-  <button class="btn btn-primary" id="closeUpdateLog">Отлично!</button>
-  <button class="btn btn-secondary" id="downloadUpdateLogImage">
-    <i class="fas fa-download"></i> Сохранить как изображение
-  </button>
 </div>
-</div>
-  </div>
 
   <style>
     .update-log-modal {

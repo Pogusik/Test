@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Warhead Control</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .tabs {
+            display: flex;
+            background-color: #111;
+            border-bottom: 1px solid #0f0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-right: 1px solid #0f0;
+        }
+        .tab.active {
+            background-color: #0f0;
+            color: #000;
+            font-weight: bold;
+        }
+        .content {
+            flex: 1;
+            overflow: auto;
+            padding: 15px;
+            position: relative;
+        }
+        #terminal, #logs, #nonrp {
+            white-space: pre;
+            line-height: 1.3;
+            text-shadow: 0 0 5px #0f0;
+            display: none;
+        }
+        #terminal.active, #logs.active, #nonrp.active {
+            display: block;
+        }
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .error { color: #f00; text-shadow: 0 0 5px #f00; }
+        .warning { color: #ff0; text-shadow: 0 0 5px #ff0; }
+        .alert { color: #f80; text-shadow: 0 0 5px #f80; }
+        .success { color: #0f0; text-shadow: 0 0 5px #0f0; }
+        .highlight { color: #0ff; text-shadow: 0 0 5px #0ff; }
+        .role-script {
+            color: #aaa;
+            margin: 10px 0;
+            padding: 5px;
+            border-left: 2px solid #0f0;
+            background-color: #111;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('terminal')">TERMINAL</div>
+            <div class="tab" onclick="switchTab('logs')">LOGS</div>
+            <div class="tab" onclick="switchTab('nonrp')">NON-RP</div>
+        </div>
+        <div class="content">
+            <div id="terminal" class="active"></div>
+            <div id="logs"></div>
+            <div id="nonrp"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.content > div').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Terminal messages
+        const terminalMessages = [
+            {text: "ALPHA WARHEAD CONTROL SYSTEM v3.4.2", class: "highlight"},
+            {text: "> ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ...", class: ""},
+            {text: "> ПРОВЕРКА СОСТОЯНИЯ...", class: ""},
+            {text: "> ОШИБКА! ОШИБКА! ОШИБКА!", class: "error"},
+            {text: "", class: ""},
+            {text: "[STATUS REPORT]", class: "warning"},
+            {text: "Состояние боеголовки: КРИТИЧЕСКИЙ ОТКАЗ", class: "error"},
+            {text: "Температура активной зоны: 982°C и повышается", class: "error"},
+            {text: "Герметичность камеры: НЕ ОБЕСПЕЧЕНА", class: "error"},
+            {text: "Утечка радионуклидов: 12.7 мЗв/ч (опасный уровень)", class: "error"},
+            {text: "", class: ""},
+            {text: "[WARNING]", class: "alert"},
+            {text: "Автоматические системы: ОТКЛЮЧЕНЫ", class: "error"},
+            {text: "Ручное управление: АКТИВИРОВАНО", class: "warning"},
+            {text: "", class: ""},
+            {text: "[SECURITY ALERT]", class: "error"},
+            {text: "Обнаружены аномальные показатели в секторе 4-B", class: ""},
+            {text: "Вероятность неконтролируемой цепной реакции: 78%", class: "error"},
+            {text: "", class: ""},
+            {text: "[EMERGENCY PROTOCOL]", class: "warning"},
+            {text: "Аварийный отчёт отправлен в центральный штаб", class: ""},
+            {text: "Код угрозы: OMEGA-9", class: "alert"},
+            {text: "Запрошена поддержка: MTF Beta-7", class: "highlight"},
+            {text: "Расчётное время прибытия: 47 минут", class: "warning"},
+            {text: "", class: ""},
+            {text: "> СИСТЕМА ЗАКРЫВАЕТСЯ ДЛЯ ПРОФИЛАКТИКИ...", class: ""},
+            {text: "> НЕОБХОДИМА РУЧНАЯ ПЕРЕЗАГРУЗКА...", class: ""},
+            {text: "> ДОСТУП ЗАПРЕЩЁН...", class: ""},
+            {text: "> ", class: "blink"}
+        ];
+
+        // Log messages
+        const logMessages = [
+            "[LOG] Инициализация системы управления Alpha Warhead... УСПЕШНО",
+            "[LOG] Проверка целостности корпуса... ОБНАРУЖЕНЫ ПОВРЕЖДЕНИЯ",
+            "[LOG] Мониторинг температуры активной зоны... КРИТИЧЕСКИЕ ПОКАЗАТЕЛИ",
+            "[LOG] Проверка герметичности... УТЕЧКА ОБНАРУЖЕНА",
+            "[WARNING] Активирован протокол экстренного оповещения",
+            "[SECURITY] Запрошен отряд MTF Beta-7 ('Maz Hatters')",
+            "[LOG] Первичная задача MTF Beta-7: эвакуация персонала",
+            "[LOG] Вторичная задача: устранение утечки/контролируемый подрыв",
+            "[LOG] Дополнительные силы: только MTF Beta-7 или Epsilon-11",
+            "[LOG] Текущий уровень нагрузки реактора: 87% (критический)",
+            "[LOG] Время до перегрева: ~53 минуты",
+            "[WARNING] Все последующие операции зависят от уровня нагрузки реактора",
+            "[LOG] Система ожидает прибытия MTF...",
+            "[LOG] Автоматические протоколы отключены, ручное управление активировано"
+        ];
+
+        // Non-RP content
+        const nonRpContent = `
+Короче, ну у нас типы лохи, за боеголовкой не уследили, касси отправила последний отчёт штабу, и не успела отправить о том что аномалии съебались из камер.
+
+Приезжают Бета-7 и ахуевают: аномалии, боеголовка, так ещё и D-класс бунтует. Такие, ну бляяяять... и идут работать, пытаться вытаскивать людей в зоне, где людям уже потихоньку начинают выдаваться:
+- Позеленения экранов
+- Периодическая тошнота
+- Постепенный урон радиацией
+- Нарушения координации
+
+Вторым отрядом приходят Эпсилон-11 и:
+1. Контэймят аномалии
+2. Эвакуируют уцелевший персонал
+3. Обеспечивают прикрытие Бета-7
+
+Ну тип как-то так.
+
+=== РОЛЕВЫЕ СКРИПТЫ ===
+
+<div class="role-script">clscript PID ChaosRepressor;<size=14><color=#A0A0A0>Человек в костюме химзащиты </color><color=#4B5320>5-го класса</color><color=#A0A0A0> с </color><color=#EE7600>оранжевыми полосами</color><color=#A0A0A0>,\n на бронежилете </color><color=#727472>чёрного</color><color=#A0A0A0> цвета выделяются эмблемы Бета-7\n </color></size><size=17><color=#BFFF00>«Шляпные болванчики» - Капитан</color>\n <color=#32CD32>«Дезинфектор»</color></size>;«Дезинфектор»;175;GunE11SR,GunCOM18,108,405,121;Nato9:60,Nato556:180,Nato762:0,Ammo12Gauge:0,Ammo44Cal:0;4</div>
+
+<div class="role-script">clscript PID ChaosRepressor;<size=14><color=#A0A0A0>Человек в костюме химзащиты </color><color=#4B5320>5-го класса</color><color=#A0A0A0> с </color><color=#EE7600>оранжевыми полосами</color><color=#A0A0A0>,\n на бронежилете </color><color=#727472>чёрного</color><color=#A0A0A0> цвета выделяются эмблемы Бета-7\n </color></size><size=17><color=#BFFF00>«Шляпные болванчики» - Лейтенант </color>\n <color=#32CD32>«Дезинфектор»</color></size>;«Дезинфектор»;175;GunE11SR,GunCOM18,108,405,121;Nato9:60,Nato556:180,Nato762:0,Ammo12Gauge:0,Ammo44Cal:0;4</div>
+
+<div class="role-script">clscript PID ChaosRepressor;<size=14><color=#A0A0A0>Человек в костюме химзащиты </color><color=#4B5320>5-го класса</color><color=#A0A0A0> с </color><color=#EE7600>оранжевыми полосами</color><color=#A0A0A0>,\n на бронежилете </color><color=#727472>чёрного</color><color=#A0A0A0> цвета выделяются эмблемы Бета-7\n </color></size><size=17><color=#BFFF00>«Шляпные болванчики» - Сержант </color>\n <color=#32CD32>«Дезинфектор»</color></size>;«Дезинфектор»;175;GunE11SR,GunCOM18,108,405,121;Nato9:60,Nato556:180,Nato762:0,Ammo12Gauge:0,Ammo44Cal:0;4</div>
+
+<div class="role-script">clscript PID ChaosRepressor;<size=14><color=#A0A0A0>Человек в костюме химзащиты </color><color=#4B5320>5-го класса</color><color=#A0A0A0> с </color><color=#EE7600>оранжевыми полосами</color><color=#A0A0A0>,\n на бронежилете </color><color=#727472>чёрного</color><color=#A0A0A0> цвета выделяются эмблемы Бета-7\n </color></size><size=17><color=#BFFF00>«Шляпные болванчики» - Рядовой </color>\n <color=#32CD32>«Дезинфектор»</color></size>;«Дезинфектор»;175;GunE11SR,GunCOM18,108,405,121;Nato9:60,Nato556:180,Nato762:0,Ammo12Gauge:0,Ammo44Cal:0;4</div>
+        `;
+
+        const terminal = document.getElementById('terminal');
+        const logs = document.getElementById('logs');
+        const nonrp = document.getElementById('nonrp');
+        let terminalIndex = 0;
+        let logIndex = 0;
+
+        // Type terminal messages
+        function typeTerminal() {
+            if (terminalIndex < terminalMessages.length) {
+                const currentMessage = terminalMessages[terminalIndex];
+                const element = document.createElement('div');
+                
+                if (currentMessage.class) {
+                    const span = document.createElement('span');
+                    span.className = currentMessage.class;
+                    span.textContent = currentMessage.text;
+                    element.appendChild(span);
+                } else {
+                    element.textContent = currentMessage.text;
+                }
+                
+                terminal.appendChild(element);
+                terminalIndex++;
+                
+                const delay = currentMessage.text ? Math.random() * 100 + 50 : 200;
+                setTimeout(typeTerminal, delay);
+            } else {
+                // Add blinking cursor
+                const cursor = document.createElement('span');
+                cursor.className = 'blink';
+                cursor.textContent = '_';
+                terminal.appendChild(cursor);
+            }
+        }
+
+        // Type log messages
+        function typeLogs() {
+            if (logIndex < logMessages.length) {
+                const currentMessage = logMessages[logIndex];
+                const element = document.createElement('div');
+                
+                if (currentMessage.includes('[WARNING]')) {
+                    element.className = 'warning';
+                } else if (currentMessage.includes('[SECURITY]')) {
+                    element.className = 'alert';
+                } else if (currentMessage.includes('УСПЕШНО')) {
+                    element.className = 'success';
+                } else if (currentMessage.includes('MTF')) {
+                    element.className = 'highlight';
+                } else if (currentMessage.includes('КРИТИЧЕСКИЕ')) {
+                    element.className = 'error';
+                }
+                
+                element.textContent = currentMessage;
+                logs.appendChild(element);
+                logIndex++;
+                
+                setTimeout(typeLogs, Math.random() * 300 + 200);
+            }
+        }
+
+        // Load Non-RP content
+        function loadNonRp() {
+            nonrp.innerHTML = nonRpContent;
+        }
+
+        // Start animations
+        typeTerminal();
+        setTimeout(typeLogs, 1500);
+        setTimeout(loadNonRp, 3000);
+
+        // Static effect
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                terminal.style.opacity = 0.8 + Math.random() * 0.2;
+                logs.style.opacity = 0.8 + Math.random() * 0.2;
+                nonrp.style.opacity = 0.8 + Math.random() * 0.2;
+            }
+        }, 100);
+    </script>
+</body>
+</html>

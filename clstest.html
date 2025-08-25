@@ -1855,7 +1855,33 @@
   flex: 1;
   min-width: 120px;
 }
+.thumbnail-server-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
+.thumbnail-server-info .server-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.thumbnail-server-info span {
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
   </style>
 
   <script>
@@ -2857,6 +2883,10 @@ document.addEventListener('DOMContentLoaded', initGroups);
           <!-- Блок миниатюры с кнопками под ней -->
           <div class="thumbnail-wrapper">
             <div class="thumbnail-container" id="thumbnailPreview">
+                  <div class="thumbnail-server-info" id="thumbnailServerInfo">
+        <img id="thumbnailServerIcon" src="assets/flxp-icon.png" class="server-icon">
+        <span id="thumbnailServerName">Все серверы</span>
+    </div>
               <img id="thumbnailRoleImage" class="thumbnail-role-image" src="assets/items/350px-Capybara956.png">
               <div class="thumbnail-description-overlay" id="thumbnailDescription">
                 Описание отсутствует
@@ -3264,7 +3294,18 @@ function importGroup() {
         <div class="preview-container" id="descriptionPreview"></div>
       </div>
     </div>
-
+    
+<select id="serverSelect" style="display:none;">
+    <option value="All" data-img="assets/flxp-icon.png">Все серверы</option>
+    <option value="MediumRP" data-img="assets/purple.png">MediumRP</option>
+    <option value="Classic" data-img="assets/red.png">Classic</option>
+    <option value="AutoEvents" data-img="assets/yellow.png">AutoEvents</option>
+    <option value="LightRP" data-img="assets/blue.png">LightRP</option>
+    <option value="FullRP" data-img="assets/cyan.png">FullRP</option>
+    <option value="HardRP" data-img="assets/gray.png">HardRP</option>
+    <option value="FunRP" data-img="assets/green.png">FunRP</option>
+    <option value="EventRP" data-img="assets/mint.png">EventRP</option>
+</select>
     <div class="panel">
       <div class="panel-header">
         <i class="fas fa-backpack"></i> <i class="fas fa-boxes"></i> Инвентарь
@@ -3688,6 +3729,7 @@ function importGroup() {
           updateCategoriesCount();
           filterItems();
           clearUnavailableItems();
+          updateThumbnailPreview();
         });
       }
 
@@ -3871,18 +3913,14 @@ document.head.appendChild(style);
             filterItems();
         }
 
-        function initServerSelect() {
+function initServerSelect() {
     const serverSelect = document.getElementById('serverSelect');
     
     // Добавляем иконки к опциям
     Array.from(serverSelect.options).forEach(option => {
         const imgSrc = option.getAttribute('data-img');
         if (imgSrc) {
-            option.innerHTML = ` <img src = "${imgSrc}"
-                class = "server-icon"> $ {
-                  option.textContent
-                }
-                `;
+            option.innerHTML = `<img src="${imgSrc}" class="server-icon"> ${option.textContent}`;
         }
     });
     
@@ -3892,11 +3930,12 @@ document.head.appendChild(style);
         const imgSrc = selectedOption.getAttribute('data-img');
         
         if (imgSrc) {
-            this.selectedIndex = this.selectedIndex; // Это обновит отображение
+            this.selectedIndex = this.selectedIndex;
         }
         
         filterItems();
         clearUnavailableItems();
+        updateThumbnailPreview(); // Обновляем миниатюру при смене сервера
     });
     
     // Инициализируем при загрузке
@@ -3944,6 +3983,7 @@ document.head.appendChild(style);
       document.getElementById('serverSelect').addEventListener('change', function() {
         filterItems();
         clearUnavailableItems();
+        updateThumbnailPreview();
       });
       // Функция для очистки предметов, недоступных на текущем сервере
       function clearUnavailableItems() {
@@ -4410,6 +4450,7 @@ document.head.appendChild(style);
       // Обработчик изменения сервера
       document.getElementById('serverSelect').addEventListener('change', function() {
         filterItems();
+        updateThumbnailPreview();
         // Очищаем инвентарь при смене сервера (опционально)
         for (let i = 1; i <= 8; i++) {
           if (inventory[i].id && !isItemAvailableForCurrentServer(inventory[i].id)) {
@@ -4730,15 +4771,23 @@ document.head.appendChild(style);
         const thumbnail = document.getElementById('thumbnailPreview');
         const roleImage = document.getElementById('thumbnailRoleImage');
         const descriptionElement = document.getElementById('thumbnailDescription');
-        // Устанавливаем изображение роли
-        if (role) {
-          roleImage.src = role.image;
-          thumbnail.style.borderColor = role.color;
-        } else {
-          roleImage.src = 'assets/as2/asmodel/Tutor.png';
-          thumbnail.style.borderColor = getComputedStyle(document.documentElement)
+            const serverSelect = document.getElementById('serverSelect');
+    const selectedOption = serverSelect.options[serverSelect.selectedIndex];
+    const serverIcon = document.getElementById('thumbnailServerIcon');
+    const serverName = document.getElementById('thumbnailServerName');
+    
+    serverIcon.src = selectedOption.getAttribute('data-img') || 'assets/flxp-icon.png';
+    serverName.textContent = selectedOption.textContent;
+    
+    // Остальной код функции остается без изменений...
+    if (role) {
+        roleImage.src = role.image;
+        thumbnail.style.borderColor = role.color;
+    } else {
+        roleImage.src = 'assets/as2/asmodel/Tutor.png';
+        thumbnail.style.borderColor = getComputedStyle(document.documentElement)
             .getPropertyValue('--input-border').trim();
-        }
+    }
         // Обработка строки информации
         let formattedInfo = infoString;
         if (formattedInfo) {
@@ -5272,3 +5321,4 @@ function showModalNotification(title, message, type = 'info') {
 </body>
 
 </html>
+

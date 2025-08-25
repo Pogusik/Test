@@ -4757,7 +4757,11 @@ document.head.appendChild(style);
           const itemElement = document.createElement('div');
           itemElement.className = 'thumbnail-item';
           if (item.id) {
-            const itemData = allItems.find(it => it.id === item.id);
+            const currentServer = document.getElementById('serverSelect').value;
+const itemData = allItems.find(it => 
+    it.id === item.id && 
+    (it.server === currentServer || it.server === 'all')
+);
             const itemName = item.name.length > 10 ? item.name.substring(0, 8) + '...' : item.name;
             itemElement.innerHTML = `
                 ${itemData?.img ? ` <img src = "${itemData.img}"

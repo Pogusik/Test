@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логистический терминал - Фонд SCP</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f0f0f0; /* Светлая тема */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #004080; /* Темно-синий цвет для профессионального вида */
+        }
+        .tabs {
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab-button.active {
+            background-color: #004080;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input, select, button {
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .balance-display {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .status-open { color: orange; }
+        .status-closed { color: green; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Логистический терминал - Фонд SCP</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="dashboard">Панель управления</button>
+            <button class="tab-button" data-tab="warehouses">Склады</button>
+            <button class="tab-button" data-tab="orders">Заказать</button>
+            <button class="tab-button" data-tab="requests">Запросы</button>
+            <button class="tab-button" data-tab="ai-chat">Чат с ИИ</button>
+        </div>
+
+        <div id="dashboard" class="tab-content active">
+            <h2>Панель управления</h2>
+            <p>Добро пожаловать в логистический терминал. Используйте вкладки выше для навигации.</p>
+            <div class="balance-display">Бюджет: <span id="budget-value">10000</span> руб.</div>
+        </div>
+
+        <div id="warehouses" class="tab-content">
+            <h2>Склады</h2>
+            <div id="warehouse-summary">
+                <!-- Сводка по складам будет загружена сюда -->
+            </div>
+            <div id="warehouse-details" style="display:none;">
+                <h3 id="current-warehouse-name"></h3>
+                <table id="warehouse-items-table">
+                    <thead>
+                        <tr><th>Ячейка</th><th>Содержимое</th><th>Количество</th><th>Максимум</th></tr>
+                    </thead>
+                    <tbody id="warehouse-items-body">
+                        <!-- Данные склада будут загружены сюда -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="orders" class="tab-content">
+            <h2>Заказать</h2>
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="item-name">Название предмета:</label>
+                    <input type="text" id="item-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-quantity">Количество:</label>
+                    <input type="number" id="item-quantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="target-warehouse">Склад назначения:</label>
+                    <select id="target-warehouse" required>
+                        <option value="Гелиос-Склад">Гелиос-Склад</option>
+                        <option value="Арго-Склад">Арго-Склад</option>
+                        <option value="Терра-Склад">Терра-Склад</option>
+                        <option value="Нова-Склад">Нова-Склад</option>
+                    </select>
+                </div>
+                <button type="submit">Отправить заказ</button>
+            </form>
+        </div>
+
+        <div id="requests" class="tab-content">
+            <h2>Запросы сотрудников</h2>
+            <table id="requests-table">
+                <thead>
+                    <tr><th>Отправитель</th><th>Запрашиваемое</th><th>Количество</th><th>Статус</th><th>Действие</th></tr>
+                </thead>
+                <tbody id="requests-body">
+                    <!-- Запросы будут загружены сюда -->
+                </tbody>
+            </table>
+
+            <h3>Отправить свой запрос</h3>
+            <form id="submit-request-form">
+                <div class="form-group">
+                    <label for="requester-name">Ваше имя:</label>
+                    <input type="text" id="requester-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="request-item">Запрашиваемый предмет:</label>
+                    <input type="text" id="request-item" required>
+                </div>
+                <div class="form-group">
+                    <label for="request-quantity">Количество:</label>
+                    <input type="number" id="request-quantity" min="1" required>
+                </div>
+                <button type="submit">Отправить запрос</button>
+            </form>
+        </div>
+
+        <div id="ai-chat" class="tab-content">
+            <h2>Чат с ИИ</h2>
+            <div id="chat-log" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                <!-- Лог чата будет обновляться здесь -->
+            </div>
+            <div id="ai-options">
+                <!-- Опции ИИ будут загружены сюда -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Заглушка для API ---
+        // В реальном приложении здесь будет код для вызова Google Sheets API [[3]]
+        // и обновления данных на странице. Для демонстрации используем статичные данные.
+
+        const API_KEY = 'YOUR_API_KEY'; // Необходимо заменить на ваш API-ключ
+        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Необходимо заменить на ID вашей таблицы
+
+        // --- Функции для имитации работы с API ---
+        function simulateFetchWarehouseSummary() {
+            // Имитация получения данных о складах
+            return [
+                { name: 'Гелиос-Склад', filled: 60, total: 400 },
+                { name: 'Арго-Склад', filled: 150, total: 350 },
+                { name: 'Терра-Склад', filled: 85, total: 200 },
+                { name: 'Нова-Склад', filled: 210, total: 500 }
+            ];
+        }
+
+         function simulateFetchWarehouseDetails(warehouseName) {
+            // Имитация получения деталей склада
+            if (warehouseName === 'Гелиос-Склад') {
+                return [
+                    { cell: 'A001', content: 'Электроды биполярные', current: 234, max: 250 },
+                    { cell: 'B015', content: 'Ручки шариковые', current: 6, max: 200 },
+                    { cell: 'C102', content: 'Бумага A4', current: 1500, max: 2000 }
+                ];
+            }
+            // ... другие склады
+            return [];
+        }
+
+        function simulateFetchRequests() {
+            // Имитация получения запросов
+            return [
+                { requester: 'Отдел А-17', item: 'ручки', quantity: 15, status: 'open' },
+                { requester: 'Д-класс', item: 'перчатки латексные', quantity: 50, status: 'closed' }
+            ];
+        }
+
+        function simulateFetchAIOptions() {
+            // Имитация получения опций чата с ИИ
+             return [
+                { question: 'Как проверить баланс?', answer: 'Баланс отображается на главной панели.' },
+                { question: 'Как заказать товар?', answer: 'Перейдите во вкладку "Заказать".' }
+            ];
+        }
+
+
+        // --- Логика переключения вкладок ---
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                document.getElementById(tabId).classList.add('active');
+                button.classList.add('active');
+
+                // Загрузка данных при открытии вкладки (имитация)
+                if (tabId === 'warehouses') {
+                    loadWarehouseSummary();
+                } else if (tabId === 'requests') {
+                    loadRequests();
+                } else if (tabId === 'ai-chat') {
+                     loadAIOptions();
+                }
+            });
+        });
+
+        // --- Загрузка данных ---
+        function loadWarehouseSummary() {
+            const summaryData = simulateFetchWarehouseSummary();
+            const container = document.getElementById('warehouse-summary');
+            container.innerHTML = '<h3>Сводка по складам</h3>';
+            summaryData.forEach(wh => {
+                const div = document.createElement('div');
+                div.innerHTML = `<strong>${wh.name}</strong>: ${wh.filled}/${wh.total} свободных ячеек`;
+                container.appendChild(div);
+            });
+        }
+
+        function loadWarehouseDetails(warehouseName) {
+            document.getElementById('current-warehouse-name').textContent = warehouseName;
+            const detailsData = simulateFetchWarehouseDetails(warehouseName);
+            const tbody = document.getElementById('warehouse-items-body');
+            tbody.innerHTML = '';
+            detailsData.forEach(item => {
+                const row = tbody.insertRow();
+                row.innerHTML = `<td>${item.cell}</td><td>${item.content}</td><td>${item.current}</td><td>${item.max}</td>`;
+            });
+            document.getElementById('warehouse-details').style.display = 'block';
+        }
+
+        function loadRequests() {
+            const requestData = simulateFetchRequests();
+            const tbody = document.getElementById('requests-body');
+            tbody.innerHTML = '';
+            requestData.forEach(req => {
+                const row = tbody.insertRow();
+                const statusClass = req.status === 'open' ? 'status-open' : 'status-closed';
+                const statusText = req.status === 'open' ? 'Открыт' : 'Выполнен';
+                row.innerHTML = `<td>${req.requester}</td><td>${req.item}</td><td>${req.quantity}</td><td class="${statusClass}">${statusText}</td><td><button onclick="closeRequest('${req.requester}', '${req.item}', ${req.quantity})">Отметить выполненным</button></td>`;
+            });
+        }
+
+        function loadAIOptions() {
+            const aiData = simulateFetchAIOptions();
+            const container = document.getElementById('ai-options');
+            container.innerHTML = '<h3>Выберите тему:</h3>';
+            aiData.forEach(qa => {
+                const button = document.createElement('button');
+                button.textContent = qa.question;
+                button.onclick = () => {
+                    const chatLog = document.getElementById('chat-log');
+                    chatLog.innerHTML += `<p><strong>Вы:</strong> ${qa.question}</p>`;
+                    chatLog.innerHTML += `<p><strong>ИИ:</strong> ${qa.answer}</p>`;
+                    chatLog.scrollTop = chatLog.scrollHeight; // Прокрутка вниз
+                };
+                container.appendChild(button);
+                container.appendChild(document.createElement('br'));
+            });
+        }
+
+        // --- Обработчики форм ---
+        document.getElementById('order-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const itemName = document.getElementById('item-name').value;
+            const quantity = document.getElementById('item-quantity').value;
+            const targetWarehouse = document.getElementById('target-warehouse').value;
+
+            // Имитация отправки заказа и обновления таблицы
+            alert(`Заказ: ${quantity} x ${itemName} -> ${targetWarehouse}. (Данные отправлены в таблицу ${targetWarehouse})`);
+            document.getElementById('order-form').reset();
+            // Здесь должен быть вызов API для обновления таблицы
+        });
+
+        document.getElementById('submit-request-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const requester = document.getElementById('requester-name').value;
+            const item = document.getElementById('request-item').value;
+            const quantity = document.getElementById('request-quantity').value;
+
+            // Имитация отправки запроса
+            alert(`Ваш запрос: ${quantity} x ${item} (От: ${requester}) отправлен.`);
+            document.getElementById('submit-request-form').reset();
+            // Здесь должен быть вызов API для добавления в таблицу запросов
+        });
+
+        function closeRequest(requester, item, quantity) {
+            // Имитация закрытия запроса
+            alert(`Запрос ${quantity} x ${item} (От: ${requester}) отмечен как выполненный.`);
+            loadRequests(); // Обновить список
+            // Здесь должен быть вызов API для обновления статуса в таблице
+        }
+
+        // Инициализация при загрузке страницы
+        loadWarehouseSummary();
+        loadRequests();
+        loadAIOptions();
+
+    </script>
+
+</body>
+</html>

@@ -4,185 +4,493 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Логистический терминал - Фонд SCP</title>
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #f0f0f0; /* Светлая тема */
-            color: #333;
+        :root {
+            --primary-color: #007AFF; /* Синий цвет Apple */
+            --primary-light: #EBF5FF; /* Светлый фон */
+            --primary-dark: #0056b3; /* Темнее синий */
+            --secondary-color: #5856D6; /* Фиолетовый для акцентов */
+            --text-color: #333333; /* Основной текст */
+            --text-light: #8E8E93; /* Вторичный текст */
+            --border-color: #d1d1d6; /* Цвет границ */
+            --success-color: #34C759; /* Зеленый для успеха */
+            --warning-color: #FF9500; /* Оранжевый для предупреждений */
+            --danger-color: #FF3B30; /* Красный для ошибок */
+            --background-color: #ffffff; /* Белый фон */
+            --card-background: #ffffff; /* Фон карточек */
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень */
+            --border-radius: 12px; /* Сглаженные углы */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* Шрифт Apple */
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--primary-light);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            background-color: #fff;
             padding: 20px;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        h1, h2 {
-            color: #004080; /* Темно-синий цвет для профессионального вида */
+
+        header {
+            background-color: var(--background-color);
+            box-shadow: var(--shadow);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
         }
-        .tabs {
-            margin-bottom: 20px;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .tab-button {
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            padding: 10px;
-            cursor: pointer;
-            margin-right: 5px;
+
+        .logo i {
+            color: var(--primary-color);
+            font-size: 1.5em;
         }
-        .tab-button.active {
-            background-color: #004080;
+
+        .logo h1 {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .balance-display {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .balance-display span {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .profile-btn {
+            background-color: var(--primary-color);
             color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.2s;
         }
+
+        .profile-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+            height: fit-content;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            margin: 0 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
         .tab-content {
+            flex: 1;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
             display: none;
         }
+
         .tab-content.active {
             display: block;
         }
+
+        .tab-content h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .warehouse-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .warehouse-card {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .warehouse-card h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .warehouse-card p {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
+
         th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            padding: 12px 15px;
             text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: var(--primary-light);
+            font-weight: 600;
+            color: var(--text-color);
         }
+
+        tr:hover {
+            background-color: var(--primary-light);
+        }
+
+        .status-open { color: var(--warning-color); }
+        .status-closed { color: var(--success-color); }
+
         .form-group {
             margin-bottom: 15px;
         }
-        input, select, button {
-            padding: 8px;
-            margin-top: 5px;
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
         }
-        .balance-display {
-            font-weight: bold;
+
+        input, select, button {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+            font-size: 1em;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #4745C8;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        #chat-log {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--primary-light);
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+        }
+
+        .message.user {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background-color: var(--primary-light);
+            color: var(--text-color);
+            margin-right: auto;
+        }
+
+        #ai-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #ai-options button {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .profile-content {
+            text-align: center;
+        }
+
+        .profile-icon {
+            font-size: 4em;
+            color: var(--primary-color);
             margin-bottom: 15px;
         }
-        .status-open { color: orange; }
-        .status-closed { color: green; }
+
+        .profile-content h2 {
+            margin-bottom: 5px;
+        }
+
+        .profile-content p {
+            color: var(--text-light);
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Логистический терминал - Фонд SCP</h1>
-
-        <div class="tabs">
-            <button class="tab-button active" data-tab="dashboard">Панель управления</button>
-            <button class="tab-button" data-tab="warehouses">Склады</button>
-            <button class="tab-button" data-tab="orders">Заказать</button>
-            <button class="tab-button" data-tab="requests">Запросы</button>
-            <button class="tab-button" data-tab="ai-chat">Чат с ИИ</button>
-        </div>
-
-        <div id="dashboard" class="tab-content active">
-            <h2>Панель управления</h2>
-            <p>Добро пожаловать в логистический терминал. Используйте вкладки выше для навигации.</p>
-            <div class="balance-display">Бюджет: <span id="budget-value">10000</span> руб.</div>
-        </div>
-
-        <div id="warehouses" class="tab-content">
-            <h2>Склады</h2>
-            <div id="warehouse-summary">
-                <!-- Сводка по складам будет загружена сюда -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-warehouse"></i>
+                <h1>Логистический терминал</h1>
             </div>
-            <div id="warehouse-details" style="display:none;">
-                <h3 id="current-warehouse-name"></h3>
-                <table id="warehouse-items-table">
+            <div class="balance-display">Бюджет: <span id="budget-value">10,000.00 руб.</span></div>
+            <button class="profile-btn" id="profile-button">
+                <i class="fas fa-user"></i>
+            </button>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <a class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Панель
+                </a>
+                <a class="nav-item" data-tab="warehouses">
+                    <i class="fas fa-boxes"></i> Склады
+                </a>
+                <a class="nav-item" data-tab="orders">
+                    <i class="fas fa-shopping-cart"></i> Заказать
+                </a>
+                <a class="nav-item" data-tab="requests">
+                    <i class="fas fa-clipboard-list"></i> Запросы
+                </a>
+                <a class="nav-item" data-tab="ai-chat">
+                    <i class="fas fa-robot"></i> Чат с ИИ
+                </a>
+            </div>
+
+            <div id="dashboard" class="tab-content active">
+                <h2>Панель управления</h2>
+                <p>Добро пожаловать в логистический терминал. Используйте меню слева для навигации.</p>
+                <div class="warehouse-summary">
+                    <div class="warehouse-card">
+                        <h3>Гелиос-Склад</h3>
+                        <p><i class="fas fa-cube"></i> 60/400 свободных ячеек</p>
+                    </div>
+                    <div class="warehouse-card">
+                        <h3>Арго-Склад</h3>
+                        <p><i class="fas fa-cube"></i> 150/350 свободных ячеек</p>
+                    </div>
+                    <div class="warehouse-card">
+                        <h3>Терра-Склад</h3>
+                        <p><i class="fas fa-cube"></i> 85/200 свободных ячеек</p>
+                    </div>
+                    <div class="warehouse-card">
+                        <h3>Нова-Склад</h3>
+                        <p><i class="fas fa-cube"></i> 210/500 свободных ячеек</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="warehouses" class="tab-content">
+                <h2>Склады</h2>
+                <div id="warehouse-summary-section">
+                    <div class="warehouse-summary">
+                        <!-- Сводка по складам будет загружена сюда -->
+                    </div>
+                </div>
+                <div id="warehouse-details" style="display:none;">
+                    <h3 id="current-warehouse-name"></h3>
+                    <table id="warehouse-items-table">
+                        <thead>
+                            <tr><th>Ячейка</th><th>Содержимое</th><th>Количество</th><th>Максимум</th></tr>
+                        </thead>
+                        <tbody id="warehouse-items-body">
+                            <!-- Данные склада будут загружены сюда -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="orders" class="tab-content">
+                <h2>Заказать</h2>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="item-name"><i class="fas fa-tag"></i> Название предмета:</label>
+                        <input type="text" id="item-name" placeholder="Введите название..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-quantity"><i class="fas fa-sort-numeric-up"></i> Количество:</label>
+                        <input type="number" id="item-quantity" min="1" placeholder="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="target-warehouse"><i class="fas fa-dolly"></i> Склад назначения:</label>
+                        <select id="target-warehouse" required>
+                            <option value="">Выберите склад...</option>
+                            <option value="Гелиос-Склад">Гелиос-Склад</option>
+                            <option value="Арго-Склад">Арго-Склад</option>
+                            <option value="Терра-Склад">Терра-Склад</option>
+                            <option value="Нова-Склад">Нова-Склад</option>
+                        </select>
+                    </div>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Отправить заказ</button>
+                </form>
+            </div>
+
+            <div id="requests" class="tab-content">
+                <h2>Запросы сотрудников</h2>
+                <table id="requests-table">
                     <thead>
-                        <tr><th>Ячейка</th><th>Содержимое</th><th>Количество</th><th>Максимум</th></tr>
+                        <tr><th>Отправитель</th><th>Запрашиваемое</th><th>Количество</th><th>Статус</th><th>Действие</th></tr>
                     </thead>
-                    <tbody id="warehouse-items-body">
-                        <!-- Данные склада будут загружены сюда -->
+                    <tbody id="requests-body">
+                        <!-- Запросы будут загружены сюда -->
                     </tbody>
                 </table>
+
+                <h3 style="margin-top: 30px;">Отправить свой запрос</h3>
+                <form id="submit-request-form">
+                    <div class="form-group">
+                        <label for="requester-name"><i class="fas fa-user"></i> Ваше имя:</label>
+                        <input type="text" id="requester-name" placeholder="Введите имя..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="request-item"><i class="fas fa-tag"></i> Запрашиваемый предмет:</label>
+                        <input type="text" id="request-item" placeholder="Введите название..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="request-quantity"><i class="fas fa-sort-numeric-up"></i> Количество:</label>
+                        <input type="number" id="request-quantity" min="1" placeholder="1" required>
+                    </div>
+                    <button type="submit" class="btn-secondary"><i class="fas fa-paper-plane"></i> Отправить запрос</button>
+                </form>
             </div>
-        </div>
 
-        <div id="orders" class="tab-content">
-            <h2>Заказать</h2>
-            <form id="order-form">
-                <div class="form-group">
-                    <label for="item-name">Название предмета:</label>
-                    <input type="text" id="item-name" required>
+            <div id="ai-chat" class="tab-content">
+                <h2>Чат с ИИ</h2>
+                <div class="chat-container">
+                    <div id="chat-log">
+                        <div class="message ai">Привет! Я ваш виртуальный помощник. Чем могу помочь?</div>
+                        <!-- Лог чата будет обновляться здесь -->
+                    </div>
+                    <div id="ai-options">
+                        <!-- Опции ИИ будут загружены сюда -->
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="item-quantity">Количество:</label>
-                    <input type="number" id="item-quantity" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="target-warehouse">Склад назначения:</label>
-                    <select id="target-warehouse" required>
-                        <option value="Гелиос-Склад">Гелиос-Склад</option>
-                        <option value="Арго-Склад">Арго-Склад</option>
-                        <option value="Терра-Склад">Терра-Склад</option>
-                        <option value="Нова-Склад">Нова-Склад</option>
-                    </select>
-                </div>
-                <button type="submit">Отправить заказ</button>
-            </form>
-        </div>
-
-        <div id="requests" class="tab-content">
-            <h2>Запросы сотрудников</h2>
-            <table id="requests-table">
-                <thead>
-                    <tr><th>Отправитель</th><th>Запрашиваемое</th><th>Количество</th><th>Статус</th><th>Действие</th></tr>
-                </thead>
-                <tbody id="requests-body">
-                    <!-- Запросы будут загружены сюда -->
-                </tbody>
-            </table>
-
-            <h3>Отправить свой запрос</h3>
-            <form id="submit-request-form">
-                <div class="form-group">
-                    <label for="requester-name">Ваше имя:</label>
-                    <input type="text" id="requester-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="request-item">Запрашиваемый предмет:</label>
-                    <input type="text" id="request-item" required>
-                </div>
-                <div class="form-group">
-                    <label for="request-quantity">Количество:</label>
-                    <input type="number" id="request-quantity" min="1" required>
-                </div>
-                <button type="submit">Отправить запрос</button>
-            </form>
-        </div>
-
-        <div id="ai-chat" class="tab-content">
-            <h2>Чат с ИИ</h2>
-            <div id="chat-log" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-                <!-- Лог чата будет обновляться здесь -->
             </div>
-            <div id="ai-options">
-                <!-- Опции ИИ будут загружены сюда -->
+
+            <div id="profile" class="tab-content">
+                <div class="profile-content">
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h2>Логистик-Инструктор</h2>
+                    <p>ID: L-771</p>
+                    <p>Департамент: Логистика</p>
+                    <p>Статус: Активен</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // --- Заглушка для API ---
-        // В реальном приложении здесь будет код для вызова Google Sheets API [[3]]
-        // и обновления данных на странице. Для демонстрации используем статичные данные.
-
-        const API_KEY = 'YOUR_API_KEY'; // Необходимо заменить на ваш API-ключ
-        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Необходимо заменить на ID вашей таблицы
+        const API_KEY = 'YOUR_API_KEY';
+        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
 
         // --- Функции для имитации работы с API ---
         function simulateFetchWarehouseSummary() {
-            // Имитация получения данных о складах
             return [
                 { name: 'Гелиос-Склад', filled: 60, total: 400 },
                 { name: 'Арго-Склад', filled: 150, total: 350 },
@@ -191,8 +499,7 @@
             ];
         }
 
-         function simulateFetchWarehouseDetails(warehouseName) {
-            // Имитация получения деталей склада
+        function simulateFetchWarehouseDetails(warehouseName) {
             if (warehouseName === 'Гелиос-Склад') {
                 return [
                     { cell: 'A001', content: 'Электроды биполярные', current: 234, max: 250 },
@@ -200,12 +507,10 @@
                     { cell: 'C102', content: 'Бумага A4', current: 1500, max: 2000 }
                 ];
             }
-            // ... другие склады
             return [];
         }
 
         function simulateFetchRequests() {
-            // Имитация получения запросов
             return [
                 { requester: 'Отдел А-17', item: 'ручки', quantity: 15, status: 'open' },
                 { requester: 'Д-класс', item: 'перчатки латексные', quantity: 50, status: 'closed' }
@@ -213,65 +518,57 @@
         }
 
         function simulateFetchAIOptions() {
-            // Имитация получения опций чата с ИИ
              return [
-                { question: 'Как проверить баланс?', answer: 'Баланс отображается на главной панели.' },
-                { question: 'Как заказать товар?', answer: 'Перейдите во вкладку "Заказать".' }
+                { question: 'Как проверить баланс?', answer: 'Баланс отображается на главной панели и в верхней части экрана.' },
+                { question: 'Как заказать товар?', answer: 'Перейдите во вкладку "Заказать", заполните форму и нажмите "Отправить заказ".' },
+                { question: 'Где посмотреть статус запросов?', answer: 'Во вкладке "Запросы" отображаются все входящие и исходящие запросы.' }
             ];
         }
 
-
         // --- Логика переключения вкладок ---
-        document.querySelectorAll('.tab-button').forEach(button => {
+        document.querySelectorAll('.nav-item').forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
 
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
-                document.querySelectorAll('.tab-button').forEach(btn => {
+                document.querySelectorAll('.nav-item').forEach(btn => {
                     btn.classList.remove('active');
                 });
 
                 document.getElementById(tabId).classList.add('active');
                 button.classList.add('active');
-
-                // Загрузка данных при открытии вкладки (имитация)
-                if (tabId === 'warehouses') {
-                    loadWarehouseSummary();
-                } else if (tabId === 'requests') {
-                    loadRequests();
-                } else if (tabId === 'ai-chat') {
-                     loadAIOptions();
-                }
             });
         });
 
-        // --- Загрузка данных ---
-        function loadWarehouseSummary() {
+        // --- Логика кнопки профиля ---
+        document.getElementById('profile-button').addEventListener('click', () => {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById('profile').classList.add('active');
+            // Не выделяем пункт меню для профиля, так как он отдельный
+        });
+
+        // --- Загрузка данных при открытии вкладки ---
+        document.querySelector('.nav-item[data-tab="warehouses"]').addEventListener('click', () => {
             const summaryData = simulateFetchWarehouseSummary();
-            const container = document.getElementById('warehouse-summary');
-            container.innerHTML = '<h3>Сводка по складам</h3>';
+            const container = document.getElementById('warehouse-summary-section').querySelector('.warehouse-summary');
+            container.innerHTML = '';
             summaryData.forEach(wh => {
                 const div = document.createElement('div');
-                div.innerHTML = `<strong>${wh.name}</strong>: ${wh.filled}/${wh.total} свободных ячеек`;
+                div.className = 'warehouse-card';
+                div.innerHTML = `<h3>${wh.name}</h3><p><i class="fas fa-cube"></i> ${wh.filled}/${wh.total} свободных ячеек</p>`;
                 container.appendChild(div);
             });
-        }
+        });
 
-        function loadWarehouseDetails(warehouseName) {
-            document.getElementById('current-warehouse-name').textContent = warehouseName;
-            const detailsData = simulateFetchWarehouseDetails(warehouseName);
-            const tbody = document.getElementById('warehouse-items-body');
-            tbody.innerHTML = '';
-            detailsData.forEach(item => {
-                const row = tbody.insertRow();
-                row.innerHTML = `<td>${item.cell}</td><td>${item.content}</td><td>${item.current}</td><td>${item.max}</td>`;
-            });
-            document.getElementById('warehouse-details').style.display = 'block';
-        }
-
-        function loadRequests() {
+        document.querySelector('.nav-item[data-tab="requests"]').addEventListener('click', () => {
             const requestData = simulateFetchRequests();
             const tbody = document.getElementById('requests-body');
             tbody.innerHTML = '';
@@ -279,27 +576,26 @@
                 const row = tbody.insertRow();
                 const statusClass = req.status === 'open' ? 'status-open' : 'status-closed';
                 const statusText = req.status === 'open' ? 'Открыт' : 'Выполнен';
-                row.innerHTML = `<td>${req.requester}</td><td>${req.item}</td><td>${req.quantity}</td><td class="${statusClass}">${statusText}</td><td><button onclick="closeRequest('${req.requester}', '${req.item}', ${req.quantity})">Отметить выполненным</button></td>`;
+                row.innerHTML = `<td>${req.requester}</td><td>${req.item}</td><td>${req.quantity}</td><td class="${statusClass}">${statusText}</td><td><button onclick="closeRequest('${req.requester}', '${req.item}', ${req.quantity})"><i class="fas fa-check"></i> Отметить</button></td>`;
             });
-        }
+        });
 
-        function loadAIOptions() {
+         document.querySelector('.nav-item[data-tab="ai-chat"]').addEventListener('click', () => {
             const aiData = simulateFetchAIOptions();
             const container = document.getElementById('ai-options');
-            container.innerHTML = '<h3>Выберите тему:</h3>';
+            container.innerHTML = '';
             aiData.forEach(qa => {
                 const button = document.createElement('button');
-                button.textContent = qa.question;
+                button.innerHTML = `<i class="fas fa-comment-dots"></i> ${qa.question}`;
                 button.onclick = () => {
                     const chatLog = document.getElementById('chat-log');
-                    chatLog.innerHTML += `<p><strong>Вы:</strong> ${qa.question}</p>`;
-                    chatLog.innerHTML += `<p><strong>ИИ:</strong> ${qa.answer}</p>`;
-                    chatLog.scrollTop = chatLog.scrollHeight; // Прокрутка вниз
+                    chatLog.innerHTML += `<div class="message user">${qa.question}</div>`;
+                    chatLog.innerHTML += `<div class="message ai">${qa.answer}</div>`;
+                    chatLog.scrollTop = chatLog.scrollHeight;
                 };
                 container.appendChild(button);
-                container.appendChild(document.createElement('br'));
             });
-        }
+        });
 
         // --- Обработчики форм ---
         document.getElementById('order-form').addEventListener('submit', (e) => {
@@ -308,10 +604,8 @@
             const quantity = document.getElementById('item-quantity').value;
             const targetWarehouse = document.getElementById('target-warehouse').value;
 
-            // Имитация отправки заказа и обновления таблицы
             alert(`Заказ: ${quantity} x ${itemName} -> ${targetWarehouse}. (Данные отправлены в таблицу ${targetWarehouse})`);
             document.getElementById('order-form').reset();
-            // Здесь должен быть вызов API для обновления таблицы
         });
 
         document.getElementById('submit-request-form').addEventListener('submit', (e) => {
@@ -320,23 +614,15 @@
             const item = document.getElementById('request-item').value;
             const quantity = document.getElementById('request-quantity').value;
 
-            // Имитация отправки запроса
             alert(`Ваш запрос: ${quantity} x ${item} (От: ${requester}) отправлен.`);
             document.getElementById('submit-request-form').reset();
-            // Здесь должен быть вызов API для добавления в таблицу запросов
         });
 
         function closeRequest(requester, item, quantity) {
-            // Имитация закрытия запроса
             alert(`Запрос ${quantity} x ${item} (От: ${requester}) отмечен как выполненный.`);
-            loadRequests(); // Обновить список
-            // Здесь должен быть вызов API для обновления статуса в таблице
+            // Имитация перезагрузки вкладки запросов
+            document.querySelector('.nav-item[data-tab="requests"]').click();
         }
-
-        // Инициализация при загрузке страницы
-        loadWarehouseSummary();
-        loadRequests();
-        loadAIOptions();
 
     </script>
 

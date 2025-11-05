@@ -543,6 +543,50 @@
             flex-direction: column;
             gap: 10px;
         }
+        
+        .case-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .case-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .case-option:hover {
+            border-color: rgba(52, 152, 219, 0.5);
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .case-option.active {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
+        }
+        
+        .case-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .case-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .case-description {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+        }
     </style>
 </head>
 <body>
@@ -555,6 +599,32 @@
     <div class="container">
         <div class="main-content">
             <div class="editor-section">
+                <div class="card">
+                    <h2>Тип контейнера</h2>
+                    <div class="case-selector" id="caseSelector">
+                        <div class="case-option active" data-case="metal">
+                            <div class="case-icon">🔒</div>
+                            <div class="case-name">Крутый типы с Металлический кейс</div>
+                            <div class="case-description">custom_key_cards_metal_case</div>
+                        </div>
+                        <div class="case-option" data-case="taskforce">
+                            <div class="case-icon">🛡️</div>
+                            <div class="case-name">МОГ</div>
+                            <div class="case-description">custom_key_cards_task_force</div>
+                        </div>
+                        <div class="case-option" data-case="management">
+                            <div class="case-icon">💼</div>
+                            <div class="case-name">Админы</div>
+                            <div class="case-description">custom_key_cards_management</div>
+                        </div>
+                        <div class="case-option" data-case="site02">
+                            <div class="case-icon">🏢</div>
+                            <div class="case-name">Рабы участка 02</div>
+                            <div class="case-description">custom_key_cards_site02</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <h2>Список ключ-карт</h2>
                     <div class="card-list" id="cardList">
@@ -829,9 +899,18 @@
             "ArmoryLevelOne", "ArmoryLevelTwo", "ArmoryLevelThree", "ScpOverride"
         ];
 
+        // Типы контейнеров
+        const caseTypes = {
+            metal: "custom_key_cards_metal_case",
+            taskforce: "custom_key_cards_task_force",
+            management: "custom_key_cards_management",
+            site02: "custom_key_cards_site02"
+        };
+
         // Текущее состояние приложения
         let cards = [...defaultCards];
         let currentCardIndex = 0;
+        let currentCaseType = "metal";
 
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
@@ -881,6 +960,18 @@
                     <div>${permissionLabels[permission] || permission}</div>
                 `;
                 permissionsVisual.appendChild(permissionItem);
+            });
+
+            // Настройка выбора типа контейнера
+            document.querySelectorAll('.case-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.case-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    currentCaseType = this.getAttribute('data-case');
+                    updateYamlOutput();
+                });
             });
         }
 
@@ -1337,12 +1428,13 @@
         // Генерация YAML вывода
         function updateYamlOutput() {
             const yamlOutput = document.getElementById('yamlOutput');
+            const caseName = caseTypes[currentCaseType];
             const config = {
-                custom_key_cards_metal_case: cards
+                [caseName]: cards
             };
             
             // Простая реализация преобразования в YAML
-            let yaml = 'custom_key_cards_metal_case:\n';
+            let yaml = `${caseName}:\n`;
             
             cards.forEach(card => {
                 yaml += `- id: ${card.id}\n`;

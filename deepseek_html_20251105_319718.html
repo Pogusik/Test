@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конфигуратор ключ-карт</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            color: var(--light-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 25px 0;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ecf0f1;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+        
+        .color-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .color-input {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .color-input label {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .color-picker {
+            width: 100%;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .color-picker:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .color-preview {
+            width: 100%;
+            height: 30px;
+            border-radius: 6px;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #219653);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .card-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .card-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .card-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .card-item p {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        .permissions-visual {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .permission-item.allowed {
+            background: rgba(39, 174, 96, 0.2);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .permission-item.denied {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .permission-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .description-preview {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .spawn-points {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .spawn-point-group {
+            margin-bottom: 15px;
+        }
+        
+        .spawn-point-group h4 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #3498db;
+        }
+        
+        .spawn-point-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .spawn-point-inputs input {
+            flex: 1;
+        }
+        
+        .add-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #bdc3c7;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .add-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .keycard-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .keycard {
+            width: 320px;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .keycard:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        .keycard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .keycard-front {
+            background: linear-gradient(135deg, #6a89cc 0%, #b8e994 100%);
+        }
+        
+        .keycard-back {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            transform: rotateY(180deg);
+        }
+        
+        .keycard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .keycard-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+        
+        .keycard-id {
+            font-size: 0.9rem;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .keycard-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .keycard-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .keycard-holder {
+            font-size: 0.9rem;
+            color: #34495e;
+        }
+        
+        .keycard-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .keycard-serial {
+            font-size: 0.8rem;
+            color: #2c3e50;
+        }
+        
+        .keycard-permissions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .permission-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #27ae60;
+        }
+        
+        .permission-dot.denied {
+            background: #e74c3c;
+        }
+        
+        .flip-btn {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .flip-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .yaml-output {
+            background: rgba(0, 0, 0, 0.3);
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            color: #bdc3c7;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .remove-spawn-point {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            color: #e74c3c;
+            border-radius: 4px;
+            width: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .remove-spawn-point:hover {
+            background: rgba(231, 76, 60, 0.4);
+        }
+        
+        .alpha-slider {
+            margin-top: 10px;
+        }
+        
+        .alpha-slider input {
+            width: 100%;
+        }
+        
+        .color-with-alpha {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Конфигуратор ключ-карт</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="card">
+                    <h2>Список ключ-карт</h2>
+                    <div class="card-list" id="cardList">
+                        <!-- Список карт будет заполнен JavaScript -->
+                    </div>
+                    <div class="actions">
+                        <button class="btn" id="addCardBtn">Добавить ключ-карту</button>
+                        <button class="btn btn-danger" id="removeCardBtn">Удалить выбранную</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Основные параметры</h2>
+                    <div class="form-group">
+                        <label for="cardName">Название ключ-карты</label>
+                        <input type="text" id="cardName" class="form-control" placeholder="Например: Ключ-карта капитана ГБР">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardId">ID ключ-карты</label>
+                        <input type="number" id="cardId" class="form-control" placeholder="Например: 107">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardTitle">Название на карте</label>
+                        <input type="text" id="cardTitle" class="form-control" placeholder="Например: Капитан ГБР">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardHolder">Владелец карты</label>
+                        <input type="text" id="cardHolder" class="form-control" placeholder="Оставьте пустым для отсутствия владельца">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardWeight">Вес</label>
+                        <input type="number" id="cardWeight" class="form-control" step="0.1" value="0.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serialNumber">Серийный номер</label>
+                        <input type="number" id="serialNumber" class="form-control" value="8486484">
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Описание карты</h2>
+                    <div class="form-group">
+                        <label for="cardDescription">Описание (поддерживает Rich Text)</label>
+                        <textarea id="cardDescription" class="form-control" rows="6" placeholder="Введите описание карты..."></textarea>
+                        <small>Используйте теги &lt;size&gt; и &lt;color&gt; для форматирования текста</small>
+                    </div>
+                    
+                    <div class="description-preview" id="descriptionPreview">
+                        Предпросмотр описания появится здесь
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <div class="card">
+                    <h2>Визуализация ключ-карты</h2>
+                    <div class="keycard-preview">
+                        <div class="keycard" id="keycard">
+                            <div class="keycard-face keycard-front">
+                                <div class="keycard-header">
+                                    <div class="keycard-title" id="previewCardTitle">Название карты</div>
+                                    <div class="keycard-id" id="previewCardId">ID: 0</div>
+                                </div>
+                                <div class="keycard-body">
+                                    <div class="keycard-name" id="previewCardName">Имя карты</div>
+                                    <div class="keycard-holder" id="previewCardHolder">Владелец</div>
+                                </div>
+                                <div class="keycard-footer">
+                                    <div class="keycard-serial" id="previewSerial">Серийный: 0000000</div>
+                                    <div class="keycard-permissions" id="previewPermissions">
+                                        <!-- Разрешения будут добавлены через JS -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="keycard-face keycard-back">
+                                <div class="keycard-body">
+                                    <div class="keycard-name">Доступы</div>
+                                    <div id="previewBackContent">
+                                        <!-- Содержимое обратной стороны -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="flip-btn" id="flipCardBtn">Перевернуть карту</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="permissions">Разрешения</div>
+                            <div class="tab" data-tab="colors">Цвета</div>
+                            <div class="tab" data-tab="spawn">Точки спавна</div>
+                        </div>
+                        
+                        <div class="tab-content active" id="permissions-tab">
+                            <h3>Права доступа ключ-карты</h3>
+                            <div class="checkbox-group" id="permissionsList">
+                                <!-- Список разрешений будет заполнен JavaScript -->
+                            </div>
+                            
+                            <h3 style="margin-top: 20px;">Визуализация разрешений</h3>
+                            <div class="permissions-visual" id="permissionsVisual">
+                                <!-- Визуализация разрешений будет заполнена JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="colors-tab">
+                            <h3>Настройка цветов</h3>
+                            
+                            <div class="color-inputs">
+                                <div class="color-input">
+                                    <label for="cardColor">Цвет карты</label>
+                                    <input type="color" id="cardColor" class="color-picker" value="#666666">
+                                    <div class="color-preview" id="cardColorPreview" style="background-color: #666666;">#666666</div>
+                                    <div class="alpha-slider">
+                                        <label>Прозрачность: <span id="cardAlphaValue">78%</span></label>
+                                        <input type="range" id="cardAlpha" min="0" max="100" value="78">
+                                    </div>
+                                </div>
+                                
+                                <div class="color-input">
+                                    <label for="permColor">Цвет разрешений</label>
+                                    <input type="color" id="permColor" class="color-picker" value="#666666">
+                                    <div class="color-preview" id="permColorPreview" style="background-color: #666666;">#666666</div>
+                                    <div class="alpha-slider">
+                                        <label>Прозрачность: <span id="permAlphaValue">100%</span></label>
+                                        <input type="range" id="permAlpha" min="0" max="100" value="100">
+                                    </div>
+                                </div>
+                                
+                                <div class="color-input">
+                                    <label for="labelColor">Цвет текста</label>
+                                    <input type="color" id="labelColor" class="color-picker" value="#000000">
+                                    <div class="color-preview" id="labelColorPreview" style="background-color: #000000; color: white;">#000000</div>
+                                    <div class="alpha-slider">
+                                        <label>Прозрачность: <span id="labelAlphaValue">100%</span></label>
+                                        <input type="range" id="labelAlpha" min="0" max="100" value="100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="spawn-tab">
+                            <h3>Точки спавна</h3>
+                            <div class="form-group">
+                                <label for="spawnLimit">Лимит спавна</label>
+                                <input type="number" id="spawnLimit" class="form-control" value="0">
+                            </div>
+                            
+                            <div class="spawn-points">
+                                <div class="spawn-point-group">
+                                    <h4>Динамические точки спавна</h4>
+                                    <div id="dynamicSpawnPoints">
+                                        <!-- Точки спавна будут добавлены через JS -->
+                                    </div>
+                                    <button class="add-btn" data-type="dynamic">+ Добавить точку</button>
+                                </div>
+                                
+                                <div class="spawn-point-group">
+                                    <h4>Статические точки спавна</h4>
+                                    <div id="staticSpawnPoints">
+                                        <!-- Точки спавна будут добавлены через JS -->
+                                    </div>
+                                    <button class="add-btn" data-type="static">+ Добавить точку</button>
+                                </div>
+                                
+                                <div class="spawn-point-group">
+                                    <h4>Точки спавна по ролям</h4>
+                                    <div id="roleSpawnPoints">
+                                        <!-- Точки спавна будут добавлены через JS -->
+                                    </div>
+                                    <button class="add-btn" data-type="role">+ Добавить точку</button>
+                                </div>
+                                
+                                <div class="spawn-point-group">
+                                    <h4>Точки спавна по комнатам</h4>
+                                    <div id="roomSpawnPoints">
+                                        <!-- Точки спавна будут добавлены через JS -->
+                                    </div>
+                                    <button class="add-btn" data-type="room">+ Добавить точку</button>
+                                </div>
+                                
+                                <div class="spawn-point-group">
+                                    <h4>Точки спавна в шкафчиках</h4>
+                                    <div id="lockerSpawnPoints">
+                                        <!-- Точки спавна будут добавлены через JS -->
+                                    </div>
+                                    <button class="add-btn" data-type="locker">+ Добавить точку</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>YAML конфигурация</h2>
+                    <div class="yaml-output" id="yamlOutput">
+                        <!-- YAML вывод будет сгенерирован JavaScript -->
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-success" id="copyYamlBtn">Копировать YAML</button>
+                        <button class="btn" id="exportYamlBtn">Экспорт в файл</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные по умолчанию
+        const defaultCards = [
+            {
+                id: 107,
+                name: "Ключ-карта капитана ГБР",
+                description: "",
+                weight: 0.5,
+                spawn_properties: {
+                    limit: 0,
+                    dynamic_spawn_points: [],
+                    static_spawn_points: [],
+                    role_spawn_points: [],
+                    room_spawn_points: [],
+                    locker_spawn_points: []
+                },
+                keycard_perms: ["Checkpoints", "ExitGates", "Intercom", "AlphaWarhead", "ContainmentLevelOne", "ContainmentLevelTwo", "ContainmentLevelThree", "ArmoryLevelOne", "ArmoryLevelTwo", "ArmoryLevelThree", "ScpOverride"],
+                holder_name: "",
+                keycard_permissions_color: { r: 102, g: 102, b: 102, a: 255 },
+                key_card_color: { r: 102, g: 102, b: 102, a: 200 },
+                card_name: "Капитан ГБР",
+                label_color: { r: 0, g: 0, b: 0, a: 255 },
+                serial_detail: 8486484,
+                picked_up_hint_duration: -1,
+                selected_hint_duration: -1,
+                scale: { x: 1, y: 1, z: 1 }
+            },
+            {
+                id: 127,
+                name: "Ключ-карта зам. капитана ГБР",
+                description: "",
+                weight: 0.5,
+                spawn_properties: {
+                    limit: 0,
+                    dynamic_spawn_points: [],
+                    static_spawn_points: [],
+                    role_spawn_points: [],
+                    room_spawn_points: [],
+                    locker_spawn_points: []
+                },
+                keycard_perms: ["Checkpoints", "ExitGates", "Intercom", "AlphaWarhead", "ContainmentLevelOne", "ContainmentLevelTwo", "ContainmentLevelThree", "ArmoryLevelOne", "ArmoryLevelTwo", "ArmoryLevelThree", "ScpOverride"],
+                holder_name: "",
+                keycard_permissions_color: { r: 128, g: 128, b: 128, a: 255 },
+                key_card_color: { r: 128, g: 128, b: 128, a: 200 },
+                card_name: "Зам. Капитана ГБР",
+                label_color: { r: 0, g: 0, b: 0, a: 255 },
+                serial_detail: 8486484,
+                picked_up_hint_duration: -1,
+                selected_hint_duration: -1,
+                scale: { x: 1, y: 1, z: 1 }
+            }
+        ];
+
+        // Все возможные разрешения
+        const allPermissions = [
+            "Checkpoints", "ExitGates", "Intercom", "AlphaWarhead", 
+            "ContainmentLevelOne", "ContainmentLevelTwo", "ContainmentLevelThree", 
+            "ArmoryLevelOne", "ArmoryLevelTwo", "ArmoryLevelThree", "ScpOverride"
+        ];
+
+        // Текущее состояние приложения
+        let cards = [...defaultCards];
+        let currentCardIndex = 0;
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            renderCardList();
+            loadCard(currentCardIndex);
+            updateYamlOutput();
+        });
+
+        // Инициализация приложения
+        function initializeApp() {
+            // Заполняем список разрешений
+            const permissionsList = document.getElementById('permissionsList');
+            allPermissions.forEach(permission => {
+                const checkboxItem = document.createElement('div');
+                checkboxItem.className = 'checkbox-item';
+                checkboxItem.innerHTML = `
+                    <input type="checkbox" id="perm-${permission}" value="${permission}">
+                    <label for="perm-${permission}">${permission}</label>
+                `;
+                permissionsList.appendChild(checkboxItem);
+            });
+
+            // Заполняем визуализацию разрешений
+            const permissionsVisual = document.getElementById('permissionsVisual');
+            const permissionLabels = {
+                "Checkpoints": "Контрольные точки",
+                "ExitGates": "Выходные ворота",
+                "Intercom": "Интерком",
+                "AlphaWarhead": "Боеголовка Альфа",
+                "ContainmentLevelOne": "Уровень содержания 1",
+                "ContainmentLevelTwo": "Уровень содержания 2",
+                "ContainmentLevelThree": "Уровень содержания 3",
+                "ArmoryLevelOne": "Оружейная ур. 1",
+                "ArmoryLevelTwo": "Оружейная ур. 2",
+                "ArmoryLevelThree": "Оружейная ур. 3",
+                "ScpOverride": "Переопределение SCP"
+            };
+
+            allPermissions.forEach(permission => {
+                const permissionItem = document.createElement('div');
+                permissionItem.className = 'permission-item denied';
+                permissionItem.id = `visual-${permission}`;
+                permissionItem.innerHTML = `
+                    <div class="permission-icon">🔒</div>
+                    <div>${permissionLabels[permission] || permission}</div>
+                `;
+                permissionsVisual.appendChild(permissionItem);
+            });
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Кнопки управления картами
+            document.getElementById('addCardBtn').addEventListener('click', addNewCard);
+            document.getElementById('removeCardBtn').addEventListener('click', removeCurrentCard);
+            
+            // Основные поля ввода
+            document.getElementById('cardName').addEventListener('input', updateCard);
+            document.getElementById('cardId').addEventListener('input', updateCard);
+            document.getElementById('cardTitle').addEventListener('input', updateCard);
+            document.getElementById('cardHolder').addEventListener('input', updateCard);
+            document.getElementById('cardWeight').addEventListener('input', updateCard);
+            document.getElementById('serialNumber').addEventListener('input', updateCard);
+            document.getElementById('cardDescription').addEventListener('input', updateDescription);
+            
+            // Разрешения
+            document.querySelectorAll('#permissionsList input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updatePermissions);
+            });
+            
+            // Цвета
+            document.getElementById('cardColor').addEventListener('input', updateColorsFromPicker);
+            document.getElementById('permColor').addEventListener('input', updateColorsFromPicker);
+            document.getElementById('labelColor').addEventListener('input', updateColorsFromPicker);
+            
+            document.getElementById('cardAlpha').addEventListener('input', updateAlpha);
+            document.getElementById('permAlpha').addEventListener('input', updateAlpha);
+            document.getElementById('labelAlpha').addEventListener('input', updateAlpha);
+            
+            // Точки спавна
+            document.getElementById('spawnLimit').addEventListener('input', updateSpawnProperties);
+            document.querySelectorAll('.add-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    addSpawnPoint(this.getAttribute('data-type'));
+                });
+            });
+            
+            // Кнопки YAML
+            document.getElementById('copyYamlBtn').addEventListener('click', copyYamlToClipboard);
+            document.getElementById('exportYamlBtn').addEventListener('click', exportYamlToFile);
+            
+            // Переключение вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTab(this.getAttribute('data-tab'));
+                });
+            });
+            
+            // Переворот карты
+            document.getElementById('flipCardBtn').addEventListener('click', flipCard);
+        }
+
+        // Рендер списка карт
+        function renderCardList() {
+            const cardList = document.getElementById('cardList');
+            cardList.innerHTML = '';
+            
+            cards.forEach((card, index) => {
+                const cardItem = document.createElement('div');
+                cardItem.className = `card-item ${index === currentCardIndex ? 'active' : ''}`;
+                cardItem.innerHTML = `
+                    <h3>${card.name}</h3>
+                    <p>ID: ${card.id} | ${card.card_name}</p>
+                `;
+                cardItem.addEventListener('click', () => {
+                    currentCardIndex = index;
+                    renderCardList();
+                    loadCard(index);
+                });
+                cardList.appendChild(cardItem);
+            });
+        }
+
+        // Загрузка данных карты в форму
+        function loadCard(index) {
+            const card = cards[index];
+            
+            // Основные поля
+            document.getElementById('cardName').value = card.name;
+            document.getElementById('cardId').value = card.id;
+            document.getElementById('cardTitle').value = card.card_name;
+            document.getElementById('cardHolder').value = card.holder_name;
+            document.getElementById('cardWeight').value = card.weight;
+            document.getElementById('serialNumber').value = card.serial_detail;
+            document.getElementById('cardDescription').value = card.description;
+            
+            // Разрешения
+            document.querySelectorAll('#permissionsList input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = card.keycard_perms.includes(checkbox.value);
+            });
+            
+            // Цвета
+            const cardColor = rgbToHex(card.key_card_color.r, card.key_card_color.g, card.key_card_color.b);
+            const permColor = rgbToHex(card.keycard_permissions_color.r, card.keycard_permissions_color.g, card.keycard_permissions_color.b);
+            const labelColor = rgbToHex(card.label_color.r, card.label_color.g, card.label_color.b);
+            
+            document.getElementById('cardColor').value = cardColor;
+            document.getElementById('permColor').value = permColor;
+            document.getElementById('labelColor').value = labelColor;
+            
+            document.getElementById('cardAlpha').value = Math.round(card.key_card_color.a / 255 * 100);
+            document.getElementById('permAlpha').value = Math.round(card.keycard_permissions_color.a / 255 * 100);
+            document.getElementById('labelAlpha').value = Math.round(card.label_color.a / 255 * 100);
+            
+            document.getElementById('cardAlphaValue').textContent = `${Math.round(card.key_card_color.a / 255 * 100)}%`;
+            document.getElementById('permAlphaValue').textContent = `${Math.round(card.keycard_permissions_color.a / 255 * 100)}%`;
+            document.getElementById('labelAlphaValue').textContent = `${Math.round(card.label_color.a / 255 * 100)}%`;
+            
+            // Точки спавна
+            document.getElementById('spawnLimit').value = card.spawn_properties.limit;
+            
+            // Обновляем предпросмотр
+            updateDescriptionPreview();
+            updateCardPreview();
+            updatePermissionsVisual();
+            updateColorPreviews();
+            updateYamlOutput();
+        }
+
+        // Обновление данных карты
+        function updateCard() {
+            const card = cards[currentCardIndex];
+            
+            card.name = document.getElementById('cardName').value;
+            card.id = parseInt(document.getElementById('cardId').value) || 0;
+            card.card_name = document.getElementById('cardTitle').value;
+            card.holder_name = document.getElementById('cardHolder').value;
+            card.weight = parseFloat(document.getElementById('cardWeight').value) || 0.5;
+            card.serial_detail = parseInt(document.getElementById('serialNumber').value) || 0;
+            
+            updateCardPreview();
+            updateYamlOutput();
+            renderCardList();
+        }
+
+        // Обновление описания
+        function updateDescription() {
+            cards[currentCardIndex].description = document.getElementById('cardDescription').value;
+            updateDescriptionPreview();
+            updateYamlOutput();
+        }
+
+        // Обновление предпросмотра описания
+        function updateDescriptionPreview() {
+            const description = document.getElementById('cardDescription').value;
+            document.getElementById('descriptionPreview').innerHTML = description || 'Предпросмотр описания появится здесь';
+        }
+
+        // Обновление разрешений
+        function updatePermissions() {
+            const card = cards[currentCardIndex];
+            card.keycard_perms = [];
+            
+            document.querySelectorAll('#permissionsList input[type="checkbox"]:checked').forEach(checkbox => {
+                card.keycard_perms.push(checkbox.value);
+            });
+            
+            updatePermissionsVisual();
+            updateCardPreview();
+            updateYamlOutput();
+        }
+
+        // Обновление визуализации разрешений
+        function updatePermissionsVisual() {
+            const card = cards[currentCardIndex];
+            
+            allPermissions.forEach(permission => {
+                const visualItem = document.getElementById(`visual-${permission}`);
+                if (card.keycard_perms.includes(permission)) {
+                    visualItem.className = 'permission-item allowed';
+                    visualItem.querySelector('.permission-icon').textContent = '🔓';
+                } else {
+                    visualItem.className = 'permission-item denied';
+                    visualItem.querySelector('.permission-icon').textContent = '🔒';
+                }
+            });
+        }
+
+        // Обновление цветов из палитры
+        function updateColorsFromPicker() {
+            const card = cards[currentCardIndex];
+            
+            const cardColor = hexToRgb(document.getElementById('cardColor').value);
+            const permColor = hexToRgb(document.getElementById('permColor').value);
+            const labelColor = hexToRgb(document.getElementById('labelColor').value);
+            
+            const cardAlpha = parseInt(document.getElementById('cardAlpha').value);
+            const permAlpha = parseInt(document.getElementById('permAlpha').value);
+            const labelAlpha = parseInt(document.getElementById('labelAlpha').value);
+            
+            card.key_card_color = {
+                r: cardColor.r,
+                g: cardColor.g,
+                b: cardColor.b,
+                a: Math.round(cardAlpha / 100 * 255)
+            };
+            
+            card.keycard_permissions_color = {
+                r: permColor.r,
+                g: permColor.g,
+                b: permColor.b,
+                a: Math.round(permAlpha / 100 * 255)
+            };
+            
+            card.label_color = {
+                r: labelColor.r,
+                g: labelColor.g,
+                b: labelColor.b,
+                a: Math.round(labelAlpha / 100 * 255)
+            };
+            
+            updateColorPreviews();
+            updateCardPreview();
+            updateYamlOutput();
+        }
+
+        // Обновление прозрачности
+        function updateAlpha() {
+            document.getElementById('cardAlphaValue').textContent = `${document.getElementById('cardAlpha').value}%`;
+            document.getElementById('permAlphaValue').textContent = `${document.getElementById('permAlpha').value}%`;
+            document.getElementById('labelAlphaValue').textContent = `${document.getElementById('labelAlpha').value}%`;
+            
+            updateColorsFromPicker();
+        }
+
+        // Обновление предпросмотра цветов
+        function updateColorPreviews() {
+            const card = cards[currentCardIndex];
+            
+            // Цвет карты
+            const cardColor = `rgba(${card.key_card_color.r}, ${card.key_card_color.g}, ${card.key_card_color.b}, ${card.key_card_color.a / 255})`;
+            const cardHex = rgbToHex(card.key_card_color.r, card.key_card_color.g, card.key_card_color.b);
+            document.getElementById('cardColorPreview').style.backgroundColor = cardColor;
+            document.getElementById('cardColorPreview').textContent = cardHex;
+            
+            // Цвет разрешений
+            const permColor = `rgb(${card.keycard_permissions_color.r}, ${card.keycard_permissions_color.g}, ${card.keycard_permissions_color.b})`;
+            const permHex = rgbToHex(card.keycard_permissions_color.r, card.keycard_permissions_color.g, card.keycard_permissions_color.b);
+            document.getElementById('permColorPreview').style.backgroundColor = permColor;
+            document.getElementById('permColorPreview').textContent = permHex;
+            
+            // Цвет текста
+            const labelColor = `rgb(${card.label_color.r}, ${card.label_color.g}, ${card.label_color.b})`;
+            const labelHex = rgbToHex(card.label_color.r, card.label_color.g, card.label_color.b);
+            document.getElementById('labelColorPreview').style.backgroundColor = labelColor;
+            document.getElementById('labelColorPreview').textContent = labelHex;
+            
+            // Определяем, светлый или тёмный цвет для текста
+            const brightness = (card.label_color.r * 299 + card.label_color.g * 587 + card.label_color.b * 114) / 1000;
+            document.getElementById('labelColorPreview').style.color = brightness > 125 ? 'black' : 'white';
+        }
+
+        // Обновление свойств спавна
+        function updateSpawnProperties() {
+            const card = cards[currentCardIndex];
+            card.spawn_properties.limit = parseInt(document.getElementById('spawnLimit').value) || 0;
+            updateYamlOutput();
+        }
+
+        // Добавление точки спавна
+        function addSpawnPoint(type) {
+            const containerId = `${type}SpawnPoints`;
+            const container = document.getElementById(containerId);
+            
+            const spawnPointDiv = document.createElement('div');
+            spawnPointDiv.className = 'spawn-point-inputs';
+            spawnPointDiv.innerHTML = `
+                <input type="text" class="form-control" placeholder="Название точки спавна">
+                <button class="remove-spawn-point">×</button>
+            `;
+            
+            container.appendChild(spawnPointDiv);
+            
+            // Обработчик удаления точки спавна
+            spawnPointDiv.querySelector('.remove-spawn-point').addEventListener('click', function() {
+                container.removeChild(spawnPointDiv);
+                updateSpawnPoints();
+            });
+            
+            // Обновление при изменении
+            spawnPointDiv.querySelector('input').addEventListener('input', updateSpawnPoints);
+            
+            updateSpawnPoints();
+        }
+
+        // Обновление точек спавна
+        function updateSpawnPoints() {
+            const card = cards[currentCardIndex];
+            const spawnTypes = ['dynamic', 'static', 'role', 'room', 'locker'];
+            
+            spawnTypes.forEach(type => {
+                const container = document.getElementById(`${type}SpawnPoints`);
+                const points = [];
+                
+                container.querySelectorAll('input').forEach(input => {
+                    if (input.value.trim()) {
+                        points.push(input.value.trim());
+                    }
+                });
+                
+                card.spawn_properties[`${type}_spawn_points`] = points;
+            });
+            
+            updateYamlOutput();
+        }
+
+        // Добавление новой карты
+        function addNewCard() {
+            const newCard = {
+                id: cards.length > 0 ? Math.max(...cards.map(c => c.id)) + 1 : 100,
+                name: "Новая ключ-карта",
+                description: "",
+                weight: 0.5,
+                spawn_properties: {
+                    limit: 0,
+                    dynamic_spawn_points: [],
+                    static_spawn_points: [],
+                    role_spawn_points: [],
+                    room_spawn_points: [],
+                    locker_spawn_points: []
+                },
+                keycard_perms: [],
+                holder_name: "",
+                keycard_permissions_color: { r: 102, g: 102, b: 102, a: 255 },
+                key_card_color: { r: 102, g: 102, b: 102, a: 200 },
+                card_name: "Новая карта",
+                label_color: { r: 0, g: 0, b: 0, a: 255 },
+                serial_detail: 8486484,
+                picked_up_hint_duration: -1,
+                selected_hint_duration: -1,
+                scale: { x: 1, y: 1, z: 1 }
+            };
+            
+            cards.push(newCard);
+            currentCardIndex = cards.length - 1;
+            renderCardList();
+            loadCard(currentCardIndex);
+        }
+
+        // Удаление текущей карты
+        function removeCurrentCard() {
+            if (cards.length <= 1) {
+                alert('Нельзя удалить последнюю ключ-карту');
+                return;
+            }
+            
+            cards.splice(currentCardIndex, 1);
+            currentCardIndex = Math.max(0, currentCardIndex - 1);
+            renderCardList();
+            loadCard(currentCardIndex);
+        }
+
+        // Обновление предпросмотра карты
+        function updateCardPreview() {
+            const card = cards[currentCardIndex];
+            
+            document.getElementById('previewCardTitle').textContent = card.card_name;
+            document.getElementById('previewCardId').textContent = `ID: ${card.id}`;
+            document.getElementById('previewCardName').textContent = card.name;
+            document.getElementById('previewCardHolder').textContent = card.holder_name || 'Нет владельца';
+            document.getElementById('previewSerial').textContent = `Серийный: ${card.serial_detail}`;
+            
+            // Обновление разрешений на предпросмотре
+            const previewPermissions = document.getElementById('previewPermissions');
+            previewPermissions.innerHTML = '';
+            
+            allPermissions.forEach(permission => {
+                const dot = document.createElement('div');
+                dot.className = `permission-dot ${card.keycard_perms.includes(permission) ? '' : 'denied'}`;
+                previewPermissions.appendChild(dot);
+            });
+            
+            // Обновление обратной стороны карты
+            const previewBackContent = document.getElementById('previewBackContent');
+            previewBackContent.innerHTML = '';
+            
+            const permissionLabels = {
+                "Checkpoints": "Контрольные точки",
+                "ExitGates": "Выходные ворота",
+                "Intercom": "Интерком",
+                "AlphaWarhead": "Боеголовка Альфа",
+                "ContainmentLevelOne": "Уровень содержания 1",
+                "ContainmentLevelTwo": "Уровень содержания 2",
+                "ContainmentLevelThree": "Уровень содержания 3",
+                "ArmoryLevelOne": "Оружейная ур. 1",
+                "ArmoryLevelTwo": "Оружейная ур. 2",
+                "ArmoryLevelThree": "Оружейная ур. 3",
+                "ScpOverride": "Переопределение SCP"
+            };
+            
+            card.keycard_perms.forEach(permission => {
+                const permItem = document.createElement('div');
+                permItem.textContent = permissionLabels[permission] || permission;
+                permItem.style.marginBottom = '5px';
+                permItem.style.fontSize = '0.9rem';
+                previewBackContent.appendChild(permItem);
+            });
+            
+            // Применение цветов к карте
+            const keycard = document.getElementById('keycard');
+            const frontFace = keycard.querySelector('.keycard-front');
+            const cardColor = `rgba(${card.key_card_color.r}, ${card.key_card_color.g}, ${card.key_card_color.b}, ${card.key_card_color.a / 255})`;
+            frontFace.style.background = `linear-gradient(135deg, ${cardColor} 0%, ${lightenColor(cardColor, 20)} 100%)`;
+            
+            const textColor = `rgb(${card.label_color.r}, ${card.label_color.g}, ${card.label_color.b})`;
+            frontFace.style.color = textColor;
+        }
+
+        // Вспомогательная функция для осветления цвета
+        function lightenColor(color, percent) {
+            // Простая реализация для демонстрации
+            return color.replace(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/, 
+                function(match, r, g, b, a) {
+                    r = Math.min(255, parseInt(r) + percent);
+                    g = Math.min(255, parseInt(g) + percent);
+                    b = Math.min(255, parseInt(b) + percent);
+                    a = a ? parseFloat(a) : 1;
+                    return `rgba(${r}, ${g}, ${b}, ${a})`;
+                });
+        }
+
+        // Переключение вкладок
+        function switchTab(tabName) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Убрать активный класс со всех вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        // Переворот карты
+        function flipCard() {
+            const keycard = document.getElementById('keycard');
+            const currentRotation = keycard.style.transform || '';
+            
+            if (currentRotation.includes('rotateY(180deg)')) {
+                keycard.style.transform = 'rotateY(0deg)';
+            } else {
+                keycard.style.transform = 'rotateY(180deg)';
+            }
+        }
+
+        // Генерация YAML вывода
+        function updateYamlOutput() {
+            const yamlOutput = document.getElementById('yamlOutput');
+            const config = {
+                custom_key_cards_metal_case: cards
+            };
+            
+            // Простая реализация преобразования в YAML
+            let yaml = 'custom_key_cards_metal_case:\n';
+            
+            cards.forEach(card => {
+                yaml += `- id: ${card.id}\n`;
+                yaml += `  name: ${card.name}\n`;
+                yaml += `  description: >-\n    ${card.description.replace(/\n/g, '\n    ')}\n`;
+                yaml += `  weight: ${card.weight}\n`;
+                yaml += `  spawn_properties:\n`;
+                yaml += `    limit: ${card.spawn_properties.limit}\n`;
+                yaml += `    dynamic_spawn_points: ${JSON.stringify(card.spawn_properties.dynamic_spawn_points)}\n`;
+                yaml += `    static_spawn_points: ${JSON.stringify(card.spawn_properties.static_spawn_points)}\n`;
+                yaml += `    role_spawn_points: ${JSON.stringify(card.spawn_properties.role_spawn_points)}\n`;
+                yaml += `    room_spawn_points: ${JSON.stringify(card.spawn_properties.room_spawn_points)}\n`;
+                yaml += `    locker_spawn_points: ${JSON.stringify(card.spawn_properties.locker_spawn_points)}\n`;
+                yaml += `  keycard_perms: ${card.keycard_perms.join(', ')}\n`;
+                yaml += `  holder_name: '${card.holder_name}'\n`;
+                yaml += `  keycard_permissions_color:\n`;
+                yaml += `    r: ${card.keycard_permissions_color.r}\n`;
+                yaml += `    g: ${card.keycard_permissions_color.g}\n`;
+                yaml += `    b: ${card.keycard_permissions_color.b}\n`;
+                yaml += `    a: ${card.keycard_permissions_color.a}\n`;
+                yaml += `  key_card_color:\n`;
+                yaml += `    r: ${card.key_card_color.r}\n`;
+                yaml += `    g: ${card.key_card_color.g}\n`;
+                yaml += `    b: ${card.key_card_color.b}\n`;
+                yaml += `    a: ${card.key_card_color.a}\n`;
+                yaml += `  card_name: ${card.card_name}\n`;
+                yaml += `  label_color:\n`;
+                yaml += `    r: ${card.label_color.r}\n`;
+                yaml += `    g: ${card.label_color.g}\n`;
+                yaml += `    b: ${card.label_color.b}\n`;
+                yaml += `    a: ${card.label_color.a}\n`;
+                yaml += `  serial_detail: ${card.serial_detail}\n`;
+                yaml += `  picked_up_hint_duration: ${card.picked_up_hint_duration}\n`;
+                yaml += `  selected_hint_duration: ${card.selected_hint_duration}\n`;
+                yaml += `  scale:\n`;
+                yaml += `    x: ${card.scale.x}\n`;
+                yaml += `    y: ${card.scale.y}\n`;
+                yaml += `    z: ${card.scale.z}\n`;
+            });
+            
+            yamlOutput.textContent = yaml;
+        }
+
+        // Копирование YAML в буфер обмена
+        function copyYamlToClipboard() {
+            const yamlOutput = document.getElementById('yamlOutput');
+            const textArea = document.createElement('textarea');
+            textArea.value = yamlOutput.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            alert('YAML конфигурация скопирована в буфер обмена!');
+        }
+
+        // Экспорт YAML в файл
+        function exportYamlToFile() {
+            const yamlOutput = document.getElementById('yamlOutput');
+            const blob = new Blob([yamlOutput.textContent], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'keycards_config.yml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Вспомогательные функции для работы с цветами
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+    </script>
+</body>
+</html>
